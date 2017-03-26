@@ -1,0 +1,178 @@
+.textCenter {
+    text-align: center;
+}
+.cursorPointer {
+    cursor: pointer;
+}
+.standardFlex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.site {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex: 1 0 auto;
+}
+.nav-wrapper {
+    background-color: #333;
+}
+.brand-logo {
+    padding-left: 15px !important;
+}
+@media only screen and (max-width: 992px) {
+    .brand-logo {
+        padding-left: 0 !important;
+    }
+}
+.navi-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.sideNav {
+    position: fixed;
+    width: 300px;
+    right: -105%;
+    top: 0;
+    margin: 0;
+    height: 100%;
+    height: calc(100% + 60px);
+    height: -moz-calc(100%);
+    padding-bottom: 60px;
+    background-color: #fff;
+    z-index: 999;
+    overflow-y: auto;
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+}
+@keyframes toggleNav {
+    from {right: -105%;}
+    to {right: 0;}
+}
+.sideBarVisible {
+    transform: translateX(0);
+    animation-name: toggleNav;
+    animation-duration: 0.3s;
+    animation-fill-mode:forwards;
+}
+.sideNav a {
+    color: black;
+}
+.brand-logo {
+    margin: 0;
+}
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+.searchIcon {
+    margin-bottom: 17px;
+    padding-right: 5px
+}
+.productListMain {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+}
+.card {
+    width: 320px;
+    margin: 0 10px 20px 10px;
+    cursor: pointer;
+}
+.card:hover {
+    background-color: #f5f5f5;
+}
+.cardInfo {
+    margin-left: 5px;
+}
+.price-big {
+    font-size: 18px;
+    font-weight: bold;
+}
+.price-small {
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+.cartShortcutBtn {
+    position: relative;
+    top: -22px;
+    right: 10px;
+}
+.cartShortcutBtn:active {
+    background-color: gray !important;
+}
+.cartShortcutBtnIcon {
+    color: black !important;
+}
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+    color: rgb(3, 155, 229);
+}
+i.backArrow {
+    color: rgb(3, 155, 229);
+}
+.starRatingRow {
+    display: flex;
+    align-items: center;
+}
+#cardStar {
+    font-size: 16px;
+}
+.sizes span, .colors span {
+    padding: 15px 10px;
+}
+.sizes label, .colors label {
+    padding-left: 22px;
+}
+.selectImageWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.imageSelectFigure {
+    margin: 5px;
+    position: relative;
+}
+.imgSelect {
+    width: 120px;
+    height: 120px;
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 0;
+    width: 120px;
+    cursor: pointer;
+    text-align: center;
+}
+.cancelImageSelect {
+    cursor: pointer;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
+.displayNone {
+    display: none;
+}
+.addProductForm {
+    padding: 20px 0 20px 0;
+}
