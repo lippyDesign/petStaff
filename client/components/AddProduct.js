@@ -4,7 +4,9 @@ import gql from 'graphql-tag'
 import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 
-import mutation from '../mutations/AddProduct';
+import addProductMutation from '../mutations/AddProduct';
+import addPhotoToProductMutation from '../mutations/AddPhotoToProduct';
+import addColorToProductMutation from '../mutations/AddColorToProduct';
 
 class AddProduct extends Component {
     constructor(props) {
@@ -64,74 +66,78 @@ class AddProduct extends Component {
         e.preventDefault();
         this.setState({ uploading: true });
 
-        function uploadImageAsPromise (imageFile, url) {
+        function uploadImageAsPromise (imageFile, id, i, m) {
             return new Promise(function (resolve, reject) {
-                var storageRef = firebase.storage().ref().child(url);
-
+                var storageRef = firebase.storage().ref().child(`${id}/${i + 1}`);
                 //Upload file
                 var task = storageRef.put(imageFile);
-
                 //Update progress bar
                 task.on('state_changed',
-                    // function progress(snapshot){
-                    //     var percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100;
-                    //     uploader.value = percentage;
-                    // },
+                    function complete(){
+                        var downloadURL = task.snapshot.downloadURL;
+                        if (downloadURL) {
+                            console.log('success')
+                            console.log(downloadURL)
+                            m({
+                                variables: { productId: id, photo: downloadURL }
+                            })
+                        }
+                    },
                     function error(err){
                         console.log('err')
                         console.log(err)
-                    },
-                    function complete(){
-                        console.log('success')
-                        var downloadURL = task.snapshot.downloadURL;
-                        console.log(downloadURL)
                     }
                 );
             });
         }
 
         const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
-        // if (fileOne) {
-        //     firebase.storage().ref().child(`${productId}/1`).put(fileOne)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
-        // if (fileTwo) {
-        //     firebase.storage().ref().child(`${productId}/2`).put(fileTwo)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
-        // if (fileThree) {
-        //     firebase.storage().ref().child(`${productId}/3`).put(fileThree)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
-        // if (fileFour) {
-        //     firebase.storage().ref().child(`${productId}/4`).put(fileFour)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
-        // if (fileFive) {
-        //     firebase.storage().ref().child(`${productId}/5`).put(fileFive)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
-        // if (fileSix) {
-        //     firebase.storage().ref().child(`${productId}/6`).put(fileSix)
-        //         .then(snapshot => console.log(`image uploaded`))
-        //         .catch(res => console.log(res));
-        // }
+        const { white, black, blue, green, red } = this.state;
         const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
         const dateNow = new Date();
         const dateAdded = dateNow.valueOf();
 
-        this.props.mutate({
+        this.props.addProductMutation({
             variables: { title, description, price, shipping, dateAdded, priceSale: salePrice, assortment: collection },
             //refetchQueries: [{ query }]
         }).then(res => {
             const { id } = res.data.addProduct;
-            uploadImageAsPromise(fileOne, id)
-        });
+            [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
+                if (img) {
+                    const m = this.props.addPhotoToProductMutation;
+                     uploadImageAsPromise(img, id, i, m)
+                }
+            })
+            const whi = {name: 'white', exists: white}
+            const blk = {name: 'black', exists: black}
+            const blu = {name: 'blue', exists: blue}
+            const grn = {name: 'green', exists: green}
+            const rd = {name: 'red', exists: red}
+            const colorArray = [whi, blk, blu, grn, rd];
+            colorArray.forEach(({ name, exists }) => {
+                if (exists) {
+                    this.props.addColorToProductMutation({
+                        variables: { productId: id, color: name }
+                    })
+                }
+            })
+            // [{name: 'white', exists: white}, {name: 'black', exists: black}, {name: 'blue', exists: blue}, {name: 'green', exists: green}, {name: 'red', exists: red}].forEach(({ name, exists }) => {
+            //     if (exists) {
+            //         this.props.addColorToProductMutation({
+            //             variables: { productId: id, color: name }
+            //         })
+            //     }
+            //     console.log(name, exists)
+            // })
+            // this.props.addColorToProductMutation({
+            //     variables: { color: 'white' }
+            // })
+            // this.props.addColorToProductMutation({
+            //     variables: { productId: id, color: 'white' }
+            // })
+        }).then(() => {
+            
+        })
     }
     handleImageOneChange(e) {
         e.preventDefault();
@@ -461,4 +467,6 @@ class AddProduct extends Component {
     }
 }
 
-export default graphql(mutation)(AddProduct);
+// export default graphql(addProductMutation, { name: 'addProductMutation'})(AddProduct);
+
+export default graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AddProduct)))

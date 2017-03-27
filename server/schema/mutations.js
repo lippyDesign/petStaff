@@ -3,13 +3,16 @@ const graphql = require('graphql');
 const {
     GraphQLObjectType,
     GraphQLString,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLID
 } = graphql;
 
 const UserType = require('./types/user_type');
 const AuthService = require('../services/auth');
 const Product = mongoose.model('product');
 const ProductType = require('./types/product_type');
+const Color = mongoose.model('color');
+const ColorType = require('./types/color_type');
 
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -36,10 +39,29 @@ const mutation = new GraphQLObjectType({
                 imageFour: { type: GraphQLString },
                 imageFive: { type: GraphQLString },
                 imageSix: { type: GraphQLString },
-                
             },
             resolve(parentValue, { title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix }) {
                 return (new Product({ title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix })).save();
+            }
+        },
+        addPhotoToProduct: {
+            type: ProductType,
+            args: {
+                photo: { type: GraphQLString },
+                productId: { type: GraphQLID }
+            },
+            resolve(parentValue, { photo, productId }) {
+                return Product.addPhoto(productId, photo);
+            }
+        },
+        addColorToProduct: {
+            type: ProductType,
+            args: {
+                color: { type: GraphQLString },
+                productId: { type: GraphQLID }
+            },
+            resolve(parentValue, { color, productId }) {
+                return Product.addColor(productId, color);
             }
         },
         signup: {

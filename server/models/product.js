@@ -26,6 +26,14 @@ const ProductSchema = new Schema({
   //   type: Schema.Types.ObjectId,
   //   ref: 'user'
   // },
+  photos: [{
+    type: Schema.Types.ObjectId,
+    ref: 'photo'
+  }],
+  colors: [{
+    type: Schema.Types.ObjectId,
+    ref: 'color'
+  }],
   reviews: [{
     type: Schema.Types.ObjectId,
     ref: 'review'
@@ -42,6 +50,38 @@ ProductSchema.statics.addReview = function(id, content, rating) {
       return Promise.all([review.save(), product.save()])
         .then(([review, product]) => product);
     });
+}
+ProductSchema.statics.addPhoto = function(id, url) {
+  const Photo = mongoose.model('photo');
+
+  return this.findById(id)
+    .then(product => {
+      const photo = new Photo({ url, product })
+      product.photos.push(photo)
+      return Promise.all([photo.save(), product.save()])
+        .then(([photo, product]) => product);
+    });
+}
+ProductSchema.statics.addColor = function(id, value) {
+  const Color = mongoose.model('color');
+
+  return this.findById(id)
+    .then(product => {
+      const color = new Color({ value, product })
+      product.colors.push(color)
+      return Promise.all([color.save(), product.save()])
+        .then(([color, product]) => product);
+    });
+}
+ProductSchema.statics.findPhotos = function(id) {
+  return this.findById(id)
+    .populate('photos')
+    .then(product => product.photos);
+}
+ProductSchema.statics.findColors = function(id) {
+  return this.findById(id)
+    .populate('colors')
+    .then(product => product.colors);
 }
 
 ProductSchema.statics.findReviews = function(id) {

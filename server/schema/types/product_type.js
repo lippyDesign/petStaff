@@ -3,6 +3,8 @@ const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLInt } =
 const mongoose = require('mongoose');
 const ReviewType = require('./review_type');
 const Product = mongoose.model('product');
+const PhotoType = require('./photo_type');
+const ColorType = require('./color_type');
 
 const ProductType = new GraphQLObjectType({
     name: 'ProductType',
@@ -27,6 +29,18 @@ const ProductType = new GraphQLObjectType({
         imageFour: { type: GraphQLString },
         imageFive: { type: GraphQLString },
         imageSix: { type: GraphQLString },
+        photos: {
+            type: new GraphQLList(PhotoType),
+            resolve(parentValue) {
+                return Product.findPhotos(parentValue.id);
+            }
+        },
+        colors: {
+            type: new GraphQLList(ColorType),
+            resolve(parentValue) {
+                return Product.findColors(parentValue.id);
+            }
+        },
         reviews: {
             type: new GraphQLList(ReviewType),
             resolve(parentValue) {
