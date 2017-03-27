@@ -35,7 +35,8 @@ const mutation = new GraphQLObjectType({
                 imageThree: { type: GraphQLString },
                 imageFour: { type: GraphQLString },
                 imageFive: { type: GraphQLString },
-                imageSix: { type: GraphQLString }
+                imageSix: { type: GraphQLString },
+                
             },
             resolve(parentValue, { title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix }) {
                 return (new Product({ title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix })).save();

@@ -63,13 +63,34 @@ class AddProduct extends Component {
     onSubmit(e) {
         e.preventDefault();
         this.setState({ uploading: true });
-        // const storage = firebase.storage();
-        // const storageRef = storage.ref();
-        // const imagesRef = storageRef.child('images');
 
-        // const productId = 'abc123';
+        function uploadImageAsPromise (imageFile, url) {
+            return new Promise(function (resolve, reject) {
+                var storageRef = firebase.storage().ref().child(url);
 
-        // const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
+                //Upload file
+                var task = storageRef.put(imageFile);
+
+                //Update progress bar
+                task.on('state_changed',
+                    // function progress(snapshot){
+                    //     var percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                    //     uploader.value = percentage;
+                    // },
+                    function error(err){
+                        console.log('err')
+                        console.log(err)
+                    },
+                    function complete(){
+                        console.log('success')
+                        var downloadURL = task.snapshot.downloadURL;
+                        console.log(downloadURL)
+                    }
+                );
+            });
+        }
+
+        const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
         // if (fileOne) {
         //     firebase.storage().ref().child(`${productId}/1`).put(fileOne)
         //         .then(snapshot => console.log(`image uploaded`))
@@ -103,17 +124,14 @@ class AddProduct extends Component {
         const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
         const dateNow = new Date();
         const dateAdded = dateNow.valueOf();
-        const imageMain = 'https://www.royalcanin.com/~/media/Royal-Canin/Product-Categories/cat-adult-landing-hero.ashx';
-        const imageTwo = 'http://s.hswstatic.com/gif/bengal-cat.jpg';
-        const imageThree = '';
-        const imageFour = 'http://www.royalcanin.ca/~/media/Royal-Canin-Canada/Product-Categories/cat-adult-landing-hero.ashx';
-        const imageFive = '';
-        const imageSix = 'http://cf.ltkcdn.net/cats/images/slide/90002-800x536-Adult_Bengal.jpg';
 
         this.props.mutate({
-            variables: { title, description, price, shipping, dateAdded, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix, priceSale: salePrice, assortment: collection }
+            variables: { title, description, price, shipping, dateAdded, priceSale: salePrice, assortment: collection },
             //refetchQueries: [{ query }]
-        }).then(() => hashHistory.push('/admin'));
+        }).then(res => {
+            const { id } = res.data.addProduct;
+            uploadImageAsPromise(fileOne, id)
+        });
     }
     handleImageOneChange(e) {
         e.preventDefault();
