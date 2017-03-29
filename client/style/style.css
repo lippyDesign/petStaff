@@ -1,6 +1,9 @@
 .textCenter {
     text-align: center;
 }
+.textRed {
+    color: red;
+}
 .cursorPointer {
     cursor: pointer;
 }
@@ -175,4 +178,11 @@ input[type="file"] {
 }
 .addProductForm {
     padding: 20px 0 20px 0;
+}
+.adminProductView {
+    display: flex;
+    justify-content: space-between;
+}
+.adminDeleteProductIcon {
+    cursor: pointer;
 }

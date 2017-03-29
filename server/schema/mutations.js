@@ -13,6 +13,8 @@ const Product = mongoose.model('product');
 const ProductType = require('./types/product_type');
 const Color = mongoose.model('color');
 const ColorType = require('./types/color_type');
+const Size = mongoose.model('size');
+const SizeType = require('./types/size_type');
 
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -57,11 +59,42 @@ const mutation = new GraphQLObjectType({
         addColorToProduct: {
             type: ProductType,
             args: {
-                color: { type: GraphQLString },
-                productId: { type: GraphQLID }
+                productId: { type: GraphQLID },
+                color: { type: GraphQLString }
             },
-            resolve(parentValue, { color, productId }) {
+            resolve(parentValue, { productId, color }) {
                 return Product.addColor(productId, color);
+            }
+        },
+        addSizeToProduct: {
+            type: ProductType,
+            args: {
+                productId: { type: GraphQLID },
+                size: { type: GraphQLString }
+            },
+            resolve(parentValue, { productId, size }) {
+                return Product.addSize(productId, size);
+            }
+        },
+        addColor: {
+            type: ColorType,
+            args: { value: { type: GraphQLString } },
+            resolve(parentValue, { value }) {
+                return (new Color({ value })).save();
+            }
+        },
+        addSize: {
+            type: SizeType,
+            args: { value: { type: GraphQLString } },
+            resolve(parentValue, { value }) {
+                return (new Size({ value })).save();
+            }
+        },
+        deleteProduct: {
+            type: ProductType,
+            args: { id: { type: GraphQLID } },
+            resolve(parentValue, { id }) {
+                return Product.deleteProduct(id);
             }
         },
         signup: {

@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const ReviewType = require('./review_type');
 const Product = mongoose.model('product');
 const PhotoType = require('./photo_type');
-const ColorType = require('./color_type');
 
 const ProductType = new GraphQLObjectType({
     name: 'ProductType',
@@ -41,6 +40,12 @@ const ProductType = new GraphQLObjectType({
                 return Product.findColors(parentValue.id);
             }
         },
+        sizes: {
+            type: new GraphQLList(SizeType),
+            resolve(parentValue) {
+                return Product.findSizes(parentValue.id);
+            }
+        },
         reviews: {
             type: new GraphQLList(ReviewType),
             resolve(parentValue) {
@@ -51,3 +56,6 @@ const ProductType = new GraphQLObjectType({
 });
 
 module.exports = ProductType;
+
+const ColorType = require('./color_type');
+const SizeType = require('./size_type');

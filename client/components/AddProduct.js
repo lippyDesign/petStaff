@@ -4,9 +4,12 @@ import gql from 'graphql-tag'
 import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 
+import query from '../queries/fetchProductsAdmin';
+
 import addProductMutation from '../mutations/AddProduct';
 import addPhotoToProductMutation from '../mutations/AddPhotoToProduct';
 import addColorToProductMutation from '../mutations/AddColorToProduct';
+import addSizeToProductMutation from '../mutations/AddSizeToProduct';
 
 class AddProduct extends Component {
     constructor(props) {
@@ -59,13 +62,13 @@ class AddProduct extends Component {
             imageFourPreviewUrl: '',
             imageFivePreviewUrl: '',
             imageSixPreviewUrl: '',
-            uploading: false
+            uploading: false,
+            error: ''
         }
     }
     onSubmit(e) {
         e.preventDefault();
-        this.setState({ uploading: true });
-
+        this.setState({ uploading: true, error: '' });
         function uploadImageAsPromise (imageFile, id, i, m) {
             return new Promise(function (resolve, reject) {
                 var storageRef = firebase.storage().ref().child(`${id}/${i + 1}`);
@@ -93,13 +96,24 @@ class AddProduct extends Component {
 
         const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
         const { white, black, blue, green, red } = this.state;
+        const { oneFitsAll, xs, s, m, l, xl } = this.state;
         const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
+
+        const sizeValidation = [oneFitsAll, xs, s, m, l, xl].some(i => i === true);
+        const colorValidation = [white, black, blue, green, red].some(i => i === true);
+        const validation = [sizeValidation, colorValidation, title, price, this.state.fileOne].every(i => i);
+        if (!validation) {
+            return this.setState({
+                uploading: false,
+                error: 'title is required, price is required, main image is required, at least one color is required, at least one size is required'
+            });
+        }
+
         const dateNow = new Date();
         const dateAdded = dateNow.valueOf();
-
         this.props.addProductMutation({
             variables: { title, description, price, shipping, dateAdded, priceSale: salePrice, assortment: collection },
-            //refetchQueries: [{ query }]
+            refetchQueries: [{ query }]
         }).then(res => {
             const { id } = res.data.addProduct;
             [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
@@ -121,22 +135,22 @@ class AddProduct extends Component {
                     })
                 }
             })
-            // [{name: 'white', exists: white}, {name: 'black', exists: black}, {name: 'blue', exists: blue}, {name: 'green', exists: green}, {name: 'red', exists: red}].forEach(({ name, exists }) => {
-            //     if (exists) {
-            //         this.props.addColorToProductMutation({
-            //             variables: { productId: id, color: name }
-            //         })
-            //     }
-            //     console.log(name, exists)
-            // })
-            // this.props.addColorToProductMutation({
-            //     variables: { color: 'white' }
-            // })
-            // this.props.addColorToProductMutation({
-            //     variables: { productId: id, color: 'white' }
-            // })
+            const oneFitsAllSizes = {name: 'oneSizeFitsAll', exists: oneFitsAll};
+            const extraSmall = {name: 'xs', exists: xs};
+            const small = {name: 's', exists: s};
+            const medium = {name: 'm', exists: m};
+            const large = {name: 'l', exists: l};
+            const extraLarge = {name: 'xl', exists: xl};
+            const sizeArray = [oneFitsAllSizes, extraSmall, small, medium, large, extraLarge];
+            sizeArray.forEach(({ name, exists }) => {
+                if (exists) {
+                    this.props.addSizeToProductMutation({
+                        variables: { productId: id, size: name }
+                    })
+                }
+            })
         }).then(() => {
-            
+            hashHistory.push('/admin');
         })
     }
     handleImageOneChange(e) {
@@ -462,6 +476,7 @@ class AddProduct extends Component {
                     </label>
                 </div>
             </div>
+            <p className='textRed textCenter'>{this.state.error}</p>
             {this.state.uploading ? <div className="row"><div className="progress col s12 m6 offset-m3"><div className="indeterminate"></div></div></div> : <div className="row"><button className="btn waves-effect waves-light col s12 m6 offset-m3">Submit</button></div>}
         </form>;
     }
@@ -469,4 +484,4 @@ class AddProduct extends Component {
 
 // export default graphql(addProductMutation, { name: 'addProductMutation'})(AddProduct);
 
-export default graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AddProduct)))
+export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AddProduct))))

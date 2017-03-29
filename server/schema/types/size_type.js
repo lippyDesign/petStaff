@@ -7,25 +7,25 @@ const {
   GraphQLInt,
   GraphQLString
 } = graphql;
-const Color = mongoose.model('color');
+const Size = mongoose.model('size');
 
 const ProductType = require('./product_type');
 
-const ColorType = new GraphQLObjectType({
-    name: 'ColorType',
+const SizeType = new GraphQLObjectType({
+    name: 'SizeType',
     fields: () => ({
         id: { type: GraphQLID },
         value: { type: GraphQLString },
         products: {
             type: new GraphQLList(ProductType),
             resolve(parentValue) {
-                return Color.findById(parentValue).populate('product')
-                    .then(color => {
-                        return color.products
+                return Size.findById(parentValue).populate('product')
+                    .then(size => {
+                        return size.products
                     });
             }
         }
     })
 });
 
-module.exports = ColorType;
+module.exports = SizeType;

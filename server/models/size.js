@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ColorSchema = new Schema({
+const SizeSchema = new Schema({
   value: { type: String },
   products: [{
     type: Schema.Types.ObjectId,
@@ -9,10 +9,10 @@ const ColorSchema = new Schema({
   }]
 });
 
-ColorSchema.statics.findProducts = function(value) {
+SizeSchema.statics.findProducts = function(value) {
     return this.findOne({ value })
         .populate('products')
         .then(color => color.products);
 }
 
-mongoose.model('color', ColorSchema);
+mongoose.model('size', SizeSchema);

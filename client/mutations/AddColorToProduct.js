@@ -1,12 +1,11 @@
 import gql from 'graphql-tag';
 
 export default gql`
-    mutation AddColorToProduct($color: String, $productId: ID){
-        addColorToProduct(color: $color, productId: $productId) {
+    mutation AddColorToProduct($productId: ID, $color: String){
+        addColorToProduct(productId: $productId, color: $color) {
             id
             colors {
-                id
-                value
+            id
             }
         }
     }

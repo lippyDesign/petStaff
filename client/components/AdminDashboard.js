@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link, hashHistory } from 'react-router';
 import firebase from 'firebase';
 
+import AdminProductList from './AdminProductList';
+
 class AdminDashboard extends Component {
     logout() {
         firebase.auth().signOut()
@@ -14,6 +16,7 @@ class AdminDashboard extends Component {
             <div className="row container">
                 <Link className="btn" to="/addProduct">Add Product</Link><a onClick={this.logout.bind(this)} className="right waves-effect waves-light btn red">Log Out</a>
             </div>
+            <AdminProductList />
         </section>
     }
 }
