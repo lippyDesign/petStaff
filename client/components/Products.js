@@ -1,21 +1,27 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 
 import Card from './Card';
 import SearchForm from './SearchForm';
+
+import query from '../queries/fetchProducts';
 
 class Products extends Component {
     renderSearchBox() {
         return <SearchForm />
     }
     renderProducts() {
-        return p.map(({ title, imageMain, price, priceSale, rating, id }) => {
+        console.log(this.props.data.products)
+        return this.props.data.products.map(({ title, photos, price, priceSale, colors, sizes, reviews, id }) => {
             return (
                 <Card
                     title={title}
-                    imageMain={imageMain}
+                    photos={photos}
                     price={price}
                     priceSale={priceSale}
-                    rating={rating}
+                    colors={colors}
+                    sizes={sizes}
+                    reviews={reviews}
                     key={id}
                     id={id}
                 />
@@ -23,6 +29,22 @@ class Products extends Component {
         });
     }
     render() {
+        if (!this.props.data.products) {
+            return <div className="standardFlex paddingTopBottomFifty">
+                <div className="preloader-wrapper big active">
+                    <div className="spinner-layer spinner-blue">
+                        <div className="circle-clipper left">
+                        <div className="circle"></div>
+                        </div><div className="gap-patch">
+                        <div className="circle"></div>
+                        </div><div className="circle-clipper right">
+                        <div className="circle"></div>
+                        </div>
+                    </div>
+                </div>
+                <p>Loading Products</p>
+            </div>
+        }
         return <section className="wrapper products">
             <div className="container">
                 <div className="row">
@@ -36,116 +58,4 @@ class Products extends Component {
     }
 }
 
-export default Products;
-
-const p = [
-    {
-        id: '1',
-        title: 'Product 1',
-        Collection: 'Collection 1',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 19.99,
-        priceSale: null,
-        rating: 5,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 0,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    },
-    {
-        id: '2',
-        title: 'Product 2',
-        Collection: 'Collection 3',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 29.99,
-        priceSale: null,
-        rating: 4,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 1.99,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    },
-    {
-        id: '3',
-        title: 'Product 3',
-        Collection: 'Collection X',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 17.99,
-        priceSale: 9.99,
-        rating: 4.5,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 2.99,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    },
-    {
-        id: '4',
-        title: 'Product 4',
-        Collection: 'Collection 1',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 19.99,
-        priceSale: null,
-        rating: 5,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 0,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    },
-    {
-        id: '5',
-        title: 'Product 5',
-        Collection: 'Collection 3',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 29.99,
-        priceSale: null,
-        rating: 4,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 1.99,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    },
-    {
-        id: '6',
-        title: 'Product 6',
-        Collection: 'Collection X',
-        description: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.',
-        stats: [],
-        imageMain: 'http://placehold.it/500x370',
-        images: [],
-        price: 17.99,
-        priceSale: 9.99,
-        rating: 4.5,
-        reviews: [],
-        sizes: [],
-        colors: [],
-        shipping: 2.99,
-        dateAdded: 131435,
-        addedBy: 'e2fge3ge3wg'
-    }
-
-]
+export default graphql(query)(Products);

@@ -7,6 +7,23 @@ export default gql`
             title
             price
             priceSale
+            sizes {
+                id
+                value
+            }
+            colors {
+                id
+                value
+            }
+            photos {
+                id
+                url
+            }
+            reviews {
+                id
+                content
+                rating
+            }
         }
     }
 `;

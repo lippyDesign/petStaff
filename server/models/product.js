@@ -16,12 +16,6 @@ const ProductSchema = new Schema({
   statFour: { type: String },
   statFive: { type: String },
   statSix: { type: String },
-  imageMain: { type: String },
-  imageTwo: { type: String },
-  imageThree: { type: String },
-  imageFour: { type: String },
-  imageFive: { type: String },
-  imageSix: { type: String },
   // user: {
   //   type: Schema.Types.ObjectId,
   //   ref: 'user'
