@@ -13,10 +13,25 @@ import SearchForm from './SearchForm';
 import fetchProduct from '../queries/fetchProduct';
 
 class ProductDetail extends Component {
+    renderStatsAndDescription() {
+        const { statOne, statTwo, statThree, statFour, statFive, statSix, description } = this.props.data.product;
+        if ([statOne, statTwo, statThree, statFour, statFive, statSix].some(i => i)) {
+            return <div className="row">
+                <div className="col s12 l4"><ProductStats stats={[statOne, statTwo, statThree, statFour, statFive, statSix]} /></div>
+                <div className="col s12 l8">
+                    <ProductDescription description={description} />
+                </div>
+            </div>
+        }
+        return <div className="row">
+                <div className="col s12">
+                    <ProductDescription description={description} />
+                </div>
+            </div>
+    }
     render() {
-        console.log(this.props.data)
         if (!this.props.data.product) return <div />
-        const { photos, priceSale, price, reviews, sizes, colors, title } = this.props.data.product;
+        const { photos, priceSale, price, reviews, sizes, colors, title, description, id } = this.props.data.product;
         return <section className="productDetail container">
             <div className="row productDetailTop">
                 <div className="col s12 l2 backButtonContainer">
@@ -31,20 +46,15 @@ class ProductDetail extends Component {
                     <ProductImages photos={photos}/>
                 </div>
                 <div className="col s12 l4">
-                    <ProductBuy priceSale={priceSale} price={price} reviews={reviews} sizes={sizes} colors={colors} title={title} />
+                    <ProductBuy priceSale={priceSale} price={price} reviews={reviews} sizes={sizes} colors={colors} title={title} id={id} />
                 </div>
             </div>
-            <div className="row">
-                <div className="col s12 l4">
-                    <ProductStats />
-                </div>
-                <div className="col s12 l8">
-                    <ProductDescription />
-                </div>
-            </div>
+            <div className="divider"></div>
+            {this.renderStatsAndDescription()}
+            <div className="divider"></div>
             <div className="row">
                 <div className="col s12">
-                    <ProductReviews />
+                    <ProductReviews reviews={reviews} />
                 </div>
             </div>
             <div className="row">

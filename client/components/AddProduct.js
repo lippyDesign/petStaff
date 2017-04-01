@@ -112,7 +112,7 @@ class AddProduct extends Component {
         const dateNow = new Date();
         const dateAdded = dateNow.valueOf();
         this.props.addProductMutation({
-            variables: { title, description, price, shipping, dateAdded, priceSale: salePrice, assortment: collection },
+            variables: { title, description, price, shipping, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, priceSale: salePrice, assortment: collection },
             refetchQueries: [{ query }]
         }).then(res => {
             const { id } = res.data.addProduct;

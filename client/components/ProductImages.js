@@ -4,7 +4,7 @@ import Carousel from './Carousel';
 export default class extends Component {
     render() {
         return <section className="productImages">
-            <Carousel photos={this.props.photos} showFullscreenButton />
+            <Carousel photos={this.props.photos} showFullscreenButton showThumbnails />
         </section>;
     }
 }

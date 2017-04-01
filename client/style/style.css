@@ -1,3 +1,6 @@
+.displayNone {
+    display: none;
+}
 .textCenter {
     text-align: center;
 }
@@ -12,6 +15,10 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+.title {
+    font-size: 24px;
+    font-weight: 300;
 }
 .paddingTopBottomFifty {
     padding-top: 50px;
@@ -60,15 +67,15 @@ main {
     display: flex;
     flex-direction: column;
 }
-@keyframes toggleNav {
-    from {right: -105%;}
-    to {right: 0;}
-}
 .sideBarVisible {
     transform: translateX(0);
     animation-name: toggleNav;
     animation-duration: 0.3s;
     animation-fill-mode:forwards;
+}
+@keyframes toggleNav {
+    from {right: -105%;}
+    to {right: 0;}
 }
 .sideNav a {
     color: black;
@@ -96,6 +103,7 @@ main {
     width: 320px;
     margin: 0 10px 20px 10px;
     cursor: pointer;
+    overflow-y: hidden;
 }
 .card:hover {
     background-color: #f5f5f5;
@@ -178,9 +186,6 @@ input[type="file"] {
     top: -8px;
     right: -8px;
 }
-.displayNone {
-    display: none;
-}
 .addProductForm {
     padding: 20px 0 20px 0;
 }
@@ -203,14 +208,30 @@ input[type="file"] {
     background-color: #fff;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
-    /*left: 0;
-    top: 100%;*/
-    top: 0;
+    top: 101%;
+    /*display: none;*/
     z-index: 101;
-    /*z-index: 3;
-    display: none;*/
     cursor: auto;
+}
+.cardTwoVisible {
+    /*display: block;*/
+    animation-name: revealCardTwo;
+    animation-duration: 0.3s;
+    animation-fill-mode:forwards;
+}
+@keyframes revealCardTwo {
+    from {top: 101%}
+    to {top: 0}
+}
+.cardTwoInvisible {
+    /*display: block;*/
+    animation-name: hideCardTwo;
+    animation-duration: 0.3s;
+    animation-fill-mode:forwards;
+}
+@keyframes hideCardTwo {
+    from {top: 0}
+    to {top: 101%}
 }
 .sizeSelectorList, .colorSelectorList {
     display: flex;
@@ -228,6 +249,7 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    border-radius: 2px;
 }
 .colorSelectorList li {
     width: 60px;
@@ -266,12 +288,6 @@ input[type="file"] {
 .productBuy .sizeSelectorList, .productBuy .colorSelectorList {
     justify-content: center;
 }
-.productDescription {
-    background: green;
-}
-.productStats {
-    background: pink;
-}
 .productReviews {
     background: orange;
 }
@@ -294,4 +310,8 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     padding-top: 25px;
+}
+.activeBox {
+    border: 1px solid rgb(38, 166, 154) !important;
+    background-color: rgba(38, 166, 154, 0.2);
 }

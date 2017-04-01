@@ -37,7 +37,7 @@ const client = new ApolloClient({
 const Root = () => {
   return (
     <ApolloProvider client={client}>
-      <Router history={hashHistory}>
+      <Router history={hashHistory} onUpdate={() => window.scrollTo(0, 0)}>
         <Route path="/" component={App}>
           <IndexRoute component={Home} />
           <Route path="login" component={LoginForm} />

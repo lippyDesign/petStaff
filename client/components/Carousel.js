@@ -8,16 +8,21 @@ class Carousel extends Component {
     }
 
     render() {
-        const images = this.props.photos.map(({ url }) => ({ original: url }));
+        let images;
+        if (this.props.showThumbnails) {
+            images = this.props.photos.map(({ url }) => ({ original: url, thumbnail: url }));
+        } else {
+            images = this.props.photos.map(({ url }) => ({ original: url }));
+        }
         return (
         <ImageGallery
             items={images}
             slideInterval={2000}
-            showThumbnails={false}
-            showPlayButton={false}
+            showThumbnails={this.props.showThumbnails || false}
+            showPlayButton={this.props.showPlayButton || false}
             showFullscreenButton={this.props.showFullscreenButton || false}
             useBrowserFullscreen={this.props.showFullscreenButton ? true : false}
-            showBullets
+            showBullets={this.props.showBullets || false}
             onImageLoad={this.handleImageLoad}
             onClick={() => {
                 if (this.props.click) return hashHistory.push(`/products/${this.props.id}`)

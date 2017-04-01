@@ -11,7 +11,6 @@ class Products extends Component {
         return <SearchForm />
     }
     renderProducts() {
-        console.log(this.props.data.products)
         return this.props.data.products.map(({ title, photos, price, priceSale, colors, sizes, reviews, id }) => {
             return (
                 <Card
