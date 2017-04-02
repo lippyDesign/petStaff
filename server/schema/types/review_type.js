@@ -21,7 +21,6 @@ const ReviewType = new GraphQLObjectType({
 			resolve(parentValue) {
 				return Review.findById(parentValue).populate('product')
 					.then(review => {
-						console.log(review)
 						return review.product;
 					});
 			}

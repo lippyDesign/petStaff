@@ -315,3 +315,31 @@ input[type="file"] {
     border: 1px solid rgb(38, 166, 154) !important;
     background-color: rgba(38, 166, 154, 0.2);
 }
+.reviewHeader {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.reviewHeaderStar, .reviewHeaderStarToReview {
+    width: 24px;
+}
+.reviewHeaderStarToReview {
+    color: #26A69A;
+    cursor: pointer;
+}
+.reviewCount {
+    color: gray;
+    padding-left: 10px;
+}
+.reviewSubmit {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 10px;
+}
+.ReviewStarListItem {
+    display: inline-block;
+}
+.ReviewStarList {
+    padding-right: 10px;
+}
