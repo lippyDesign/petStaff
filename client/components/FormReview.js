@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 
 import ReviewStar from './ReviewStar';
 
-export default class extends Component {
+import mutation from '../mutations/AddReviewToProduct';
+
+class FormReview extends Component {
     constructor(props) {
         super(props);
         this.state = { ratingHover: 0, ratingClick: 0, reviewText: '' }
@@ -17,7 +20,6 @@ export default class extends Component {
         this.setState({ ratingClick });
     }
     renderStars() {
-        console.log(this.state.ratingClick)
         return [1,2,3,4,5].map(num => {
             return <ReviewStar
                 ratingHover={this.state.ratingHover}
@@ -32,8 +34,15 @@ export default class extends Component {
     }
     onReviewSubmit(e) {
         e.preventDefault();
-        console.log(this.state.ratingClick)
-        //this.setState({ ratingHover: 0, ratingClick: 0 })
+        const { ratingClick, reviewText } = this.state;
+        if (!ratingClick) return Materialize.toast('Please select star rating', 3500);
+        if (!reviewText.trim()) return Materialize.toast('Review text is required', 3500);
+        console.log(this.state.ratingClick, this.state.reviewText.trim())
+        this.props.mutate({
+            variables: { productId: this.props.id, content: reviewText, rating: ratingClick }
+        }).then(() => {
+            window.location.reload();
+        });
     }
     render() {
         return <form className='review-form' onSubmit={this.onReviewSubmit.bind(this)}>
@@ -47,3 +56,5 @@ export default class extends Component {
         </form>;
     }
 }
+
+export default graphql(mutation)(FormReview);

@@ -54,7 +54,7 @@ class ProductDetail extends Component {
             <div className="divider"></div>
             <div className="row">
                 <div className="col s12">
-                    <ProductReviews reviews={reviews} />
+                    <ProductReviews reviews={reviews} id={id} />
                 </div>
             </div>
             <div className="row">

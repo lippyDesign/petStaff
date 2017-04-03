@@ -4,7 +4,9 @@ export default class extends Component {
     render() {
         return <section className="productStats">
             <ul>
-                {this.props.stats.map(stat => <li key={stat}>{stat}</li>)}
+                {this.props.stats.map(stat => {
+                    if (stat) return <li key={stat}>{stat}</li>
+                })}
             </ul>
         </section>;
     }

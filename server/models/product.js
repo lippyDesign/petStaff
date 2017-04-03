@@ -95,6 +95,12 @@ ProductSchema.statics.deleteProduct = function(id) {
 					Photo.findById(picId).then(pic => pic.remove())
 				})
 			}
+      if (product.reviews.length > 0) {
+				const Review = mongoose.model('review');
+				product.reviews.forEach(reviewId => {
+					Review.findById(reviewId).then(rev => rev.remove())
+				})
+			}
 			if (product.sizes.length > 0) {
 				const Size = mongoose.model('size');
 				product.sizes.forEach(sizeId => {

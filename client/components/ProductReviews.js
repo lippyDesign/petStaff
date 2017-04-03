@@ -12,7 +12,28 @@ export default class extends Component {
         return 
     }
     renderReviews() {
-        this.props.reviews.map(review => <li key={'key'}>{review}</li>)
+        return this.props.reviews.map(review => <li key={'key'}>{review}</li>)
+    }
+    renderRating() {
+        const { reviews } = this.props;
+        const count = reviews.length;
+        if (!count) {
+            return <span><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><span className="reviewCount">{`${count} reviews`}</span></span>
+        }
+        let ratingSum = reviews.reduce((prev, curr) => {
+            return prev + curr.rating;
+        }, 0);
+        ratingSum = ratingSum / count;
+        const stars = []
+        while (ratingSum >= 1) {
+            stars.push(<i key={ratingSum} className="material-icons reviewHeaderStar">star_rate</i>);
+            ratingSum--;
+        }
+        if (ratingSum >= 0.5) {
+            stars.push(<i key={ratingSum} className="material-icons">star_half</i>);
+        }
+        stars.push(<span className="reviewCount" key={`${count}reviews`}>{`${count} reviews`}</span>)
+        return <span>{stars}</span>
     }
     render() {
         /*if(this.props.reviews.length) return <ul>{this.renderReviews()}</ul>
@@ -20,9 +41,9 @@ export default class extends Component {
             <p>No reviews yet</p>*/
         return <section className="reviewSection">
             <ul className="collection with-header">
-                <li className="collection-item reviewHeader"><i className="material-icons reviewHeaderStar">star_rate</i><i className="material-icons reviewHeaderStar">star_rate</i><i className="material-icons reviewHeaderStar">star_rate</i><i className="material-icons reviewHeaderStar">star_rate</i><i className="material-icons reviewHeaderStar">star_rate</i> <span className="reviewCount">50 reviews </span></li>
+                <li className="collection-item reviewHeader">{this.renderRating()}</li>
                 <li className="collection-item">
-                    <FormReview />
+                    <FormReview id={this.props.id} />
                 </li>
                 <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>
                 <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>

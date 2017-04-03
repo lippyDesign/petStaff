@@ -64,7 +64,7 @@ const mutation = new GraphQLObjectType({
                 productId: { type: GraphQLID }
             },
             resolve(parentValue, { content, rating, productId }) {
-                return Product.addPhoto(productId, content, rating);
+                return Product.addReview(productId, content, rating);
             }
         },
         addColorToProduct: {

@@ -37,8 +37,27 @@ export default class extends Component {
             Materialize.toast('Please select size & color', 4000);
         }
     }
+    renderRating() {
+        const { reviews } = this.props;
+        if (!reviews.length) {
+            return <span><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i><i className="material-icons reviewHeaderStar">star_border</i></span>
+        }
+        let ratingSum = reviews.reduce((prev, curr) => {
+            return prev + curr.rating;
+        }, 0);
+        ratingSum = ratingSum / reviews.length;
+        const stars = []
+        while (ratingSum >= 1) {
+            stars.push(<i key={ratingSum} className="material-icons reviewHeaderStar">star_rate</i>);
+            ratingSum--;
+        }
+        if (ratingSum >= 0.5) {
+            stars.push(<i key={ratingSum} className="material-icons">star_half</i>);
+        }
+        return <span>{stars}</span>
+    }
     render() {
-        const { title, photos, price, priceSale, colors, sizes, reviews, id } = this.props;
+        const { title, photos, price, priceSale, colors, sizes, id } = this.props;
         const {cardRevealed, alreadyOpened } = this.state;
         let cardTwo = "cardReveal cardTwoInvisible displayNone";
         if (cardRevealed && alreadyOpened) cardTwo = "cardReveal cardTwoVisible";
@@ -54,7 +73,7 @@ export default class extends Component {
                     <span className="price-big">{`$${priceSale || price}`}</span>
                     <span className="price-small">{priceSale ? `$${price}` : ''}</span>
                 </li>
-                <li className="starRatingRow">{reviews.length ? reviews : '0 / 0'} <i className="material-icons" id="cardStar">star_rate</i></li>
+                <li className="starRatingRow">{this.renderRating()}</li>
             </ul>
             <div className={cardTwo}>
                 <ul className="cardInfo">
@@ -63,7 +82,7 @@ export default class extends Component {
                         <span className="price-big">{`$${priceSale || price}`}</span>
                         <span className="price-small">{priceSale ? `$${price}` : ''}</span>
                     </li>
-                    <li className="starRatingRow">{reviews.length ? reviews : '0 / 0'} <i className="material-icons" id="cardStar">star_rate</i></li>
+                    <li className="starRatingRow">{this.renderRating()}</li>
                 </ul>
                 <div className="divider"></div>
                 <span className="cardLabelSmall">Size:</span>
