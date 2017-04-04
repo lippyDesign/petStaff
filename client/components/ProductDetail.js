@@ -31,7 +31,7 @@ class ProductDetail extends Component {
     }
     render() {
         if (!this.props.data.product) return <div />
-        const { photos, priceSale, price, reviews, sizes, colors, title, description, id } = this.props.data.product;
+        const { photos, priceSale, price, reviews, sizes, colors, title, description, id, shipping } = this.props.data.product;
         return <section className="productDetail container">
             <div className="row productDetailTop">
                 <div className="col s12 l2 backButtonContainer">
@@ -46,7 +46,7 @@ class ProductDetail extends Component {
                     <ProductImages photos={photos}/>
                 </div>
                 <div className="col s12 l4">
-                    <ProductBuy priceSale={priceSale} price={price} reviews={reviews} sizes={sizes} colors={colors} title={title} id={id} />
+                    <ProductBuy priceSale={priceSale} price={price} reviews={reviews} sizes={sizes} colors={colors} title={title} id={id} shipping={shipping} photos={photos} addToCart={this.props.addToCart} />
                 </div>
             </div>
             <div className="divider"></div>

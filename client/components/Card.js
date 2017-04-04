@@ -26,9 +26,9 @@ export default class extends Component {
     }
     addToCartClicked() {
         if (this.state.selectedSize && this.state.selectedColor) {
-            const { price, priceSale, title} = this.props;
+            const { price, priceSale, title, shipping} = this.props;
             const pic = this.props.photos[0].url
-            const product = { id: this.state.id, size: this.state.selectedSize, color: this.state.selectedColor, title, pic, price, priceSale };
+            const product = { id: this.state.id, size: this.state.selectedSize, color: this.state.selectedColor, title, pic, price, priceSale, shipping };
             this.props.addToCart(product);
             Materialize.toast('Added to cart :)', 4000);
             this.setState({ cardRevealed: false });
@@ -60,7 +60,7 @@ export default class extends Component {
         return <span>{stars}</span>
     }
     render() {
-        const { title, photos, price, priceSale, colors, sizes, id } = this.props;
+        const { title, photos, price, priceSale, colors, sizes, id, shipping } = this.props;
         const {cardRevealed, alreadyOpened } = this.state;
         let cardTwo = "cardReveal cardTwoInvisible displayNone";
         if (cardRevealed && alreadyOpened) cardTwo = "cardReveal cardTwoVisible";
@@ -75,6 +75,7 @@ export default class extends Component {
                 <li>
                     <span className="price-big">{`$${priceSale || price}`}</span>
                     <span className="price-small">{priceSale ? `$${price}` : ''}</span>
+                    <span className="price-shipping">{shipping ? `$${shipping} shipping` : 'free shipping'}</span>
                 </li>
                 <li className="starRatingRow">{this.renderRating()}</li>
             </ul>
@@ -84,6 +85,7 @@ export default class extends Component {
                     <li>
                         <span className="price-big">{`$${priceSale || price}`}</span>
                         <span className="price-small">{priceSale ? `$${price}` : ''}</span>
+                        <span className="price-shipping">{shipping ? `$${shipping} shipping` : 'free shipping'}</span>
                     </li>
                     <li className="starRatingRow">{this.renderRating()}</li>
                 </ul>

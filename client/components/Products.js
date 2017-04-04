@@ -11,7 +11,7 @@ class Products extends Component {
         return <SearchForm />
     }
     renderProducts() {
-        return this.props.data.products.map(({ title, photos, price, priceSale, colors, sizes, reviews, id }) => {
+        return this.props.data.products.map(({ title, photos, price, priceSale, colors, sizes, reviews, id, shipping }) => {
             return (
                 <Card
                     title={title}
@@ -24,6 +24,7 @@ class Products extends Component {
                     key={id}
                     id={id}
                     addToCart={this.props.addToCart}
+                    shipping={shipping}
                 />
             );
         });

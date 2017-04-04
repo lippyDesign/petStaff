@@ -34,6 +34,7 @@ export default gql`
                 content
                 rating
                 user {
+                    id
                     email
                 }
             }

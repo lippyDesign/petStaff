@@ -7,6 +7,9 @@
 .textRed {
     color: red;
 }
+.colorGray {
+    color: gray;
+}
 .cursorPointer {
     cursor: pointer;
 }
@@ -23,6 +26,10 @@
 .paddingTopBottomFifty {
     padding-top: 50px;
     padding-bottom: 50px;
+}
+.paddingLeftRightTwenty {
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .site {
     display: flex;
@@ -117,6 +124,10 @@ main {
 }
 .price-small {
     text-decoration: line-through;
+    margin-left: 10px;
+}
+.price-shipping {
+    color: gray;
     margin-left: 10px;
 }
 .cartShortcutBtn {
@@ -355,10 +366,48 @@ input[type="file"] {
     justify-content: space-between;
     align-items: center;
 }
+.cartItemTitle {
+    margin: 5px 0 10px 0;
+}
 .cartItemImg {
-    width: 35px;
-    height: 31px;
+    width: 55px;
+    height: 47px;
+    border-radius: 2px;
 }
 .cartTotalTag {
     padding-right: 10px;
+}
+.smallCartItem {
+    padding-bottom: 10px;
+}
+.smallCartLastRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+.quantitySelector {
+    display: flex;
+    align-items: center;
+}
+.cartArrow {
+    color: #26A69A;
+    cursor: pointer;
+}
+.cartQuantity {
+    position: relative;
+    top: -6px;
+}
+@media only screen and (max-width: 787px) {
+    .cartSmallFont {
+        font-size: 12px;
+    }
+}
+.cartCheckoutSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-bottom: 20px;
 }

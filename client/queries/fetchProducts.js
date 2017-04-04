@@ -7,6 +7,7 @@ export default gql`
             title
             price
             priceSale
+            shipping
             sizes {
                 id
                 value

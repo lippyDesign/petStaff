@@ -58,7 +58,6 @@ class ProductReviews extends Component {
         return <li className="collection-item">Please <Link to='login'>Log In</Link> to leave a review</li>
     }
     render() {
-        //console.log(this.props.reviews)
         return <section className="reviewSection">
             <ul className="collection with-header">
                 <li className="collection-item reviewHeader">{this.renderRating()}</li>

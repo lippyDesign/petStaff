@@ -17,7 +17,7 @@ class LoginForm extends Component {
         // nextProps -- next set of props that will be in place
         if (!this.props.data.user && nextProps.data.user) {
             // redirect to dashboard
-            hashHistory.push('/dashboard');
+            hashHistory.push('/products');
         }
     }
     onSubmit({ email, password }) {

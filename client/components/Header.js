@@ -22,7 +22,7 @@ class Header extends Component {
         const { loading, user } = this.props.data;
         if (loading) return <div />;
         if (user) {
-            return <ul className="right hide-on-med-and-down">
+            return <ul className="right hide-on-small-only">
                 <li><Link to="/" className="navi-link">Home</Link></li>
                 <li><Link to="/products" className="navi-link">Products</Link></li>
                 <li><Link to="/dashboard" className="navi-link">Account</Link></li>
@@ -30,7 +30,7 @@ class Header extends Component {
                 <li><Link to="/cart" className="navi-link"><i className="material-icons">shopping_cart</i> Cart: {this.props.cartTotalItems}</Link></li>
             </ul>;
         }
-        return <ul className="right hide-on-med-and-down">
+        return <ul className="right hide-on-small-only">
             <li><Link to="/" className="navi-link">Home</Link></li>
             <li><Link to="/products" className="navi-link">Products</Link></li>
             <li><Link to="/signup" className="navi-link">Sign Up</Link></li>
@@ -46,7 +46,7 @@ class Header extends Component {
         const { loading, user } = this.props.data;
         if (loading) return <div />;
         if (user) {
-            return <div className="hide-on-large-only right">
+            return <div className="hide-on-med-and-up right">
                 <ul id="slide-out" className={`sideNav ${sideNavVisible ? 'sideBarVisible' : ''}`}>
                     <li><Link to="/" onClick={() => this.setState({ sideNavVisible: false })} className="navi-link">Home</Link></li>
                     <li><Link to="/products" onClick={() => this.setState({ sideNavVisible: false })} className="navi-link">Products</Link></li>
@@ -60,7 +60,7 @@ class Header extends Component {
                 <div className={sideNavVisible ? '' : 'displayNone'} id="sidenav-overlay" onClick={this.toggleSidebar.bind(this)}></div>
             </div>;
         }
-        return <div className="hide-on-large-only right">
+        return <div className="hide-on-med-and-up right">
             <ul id="slide-out" className={`sideNav ${sideNavVisible ? 'sideBarVisible' : ''}`}>
                 <li><Link to="/" onClick={() => this.setState({ sideNavVisible: false })} className="navi-link">Home</Link></li>
                 <li><Link to="/products" onClick={() => this.setState({ sideNavVisible: false })} className="navi-link">Products</Link></li>
@@ -77,7 +77,7 @@ class Header extends Component {
     render() {
         return <nav>
             <div className="nav-wrapper">
-                <Link className="brand-logo" to="/">Logo</Link>
+                <Link className="brand-logo left" to="/">Logo</Link>
                 {this.renderBigNav()}
                 {this.renderSmallNav()}
             </div>
