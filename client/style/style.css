@@ -345,3 +345,20 @@ input[type="file"] {
 .ReviewStarList {
     padding-right: 10px;
 }
+.starsWrapper {
+    display: inline-block;
+    position: relative;
+    top: 4px;
+}
+.cartItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cartItemImg {
+    width: 35px;
+    height: 31px;
+}
+.cartTotalTag {
+    padding-right: 10px;
+}

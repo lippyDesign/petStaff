@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
-import gql from 'graphql-tag'
 import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 

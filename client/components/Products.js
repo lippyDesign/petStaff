@@ -23,6 +23,7 @@ class Products extends Component {
                     reviews={reviews}
                     key={id}
                     id={id}
+                    addToCart={this.props.addToCart}
                 />
             );
         });

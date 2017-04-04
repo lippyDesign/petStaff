@@ -16,10 +16,6 @@ const ProductSchema = new Schema({
   statFour: { type: String },
   statFive: { type: String },
   statSix: { type: String },
-  // user: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'user'
-  // },
   photos: [{
     type: Schema.Types.ObjectId,
     ref: 'photo'
@@ -38,12 +34,12 @@ const ProductSchema = new Schema({
   }]
 });
 
-ProductSchema.statics.addReview = function(id, content, rating) {
+ProductSchema.statics.addReview = function(id, content, rating, user) {
   const Review = mongoose.model('review');
 
   return this.findById(id)
     .then(product => {
-      const review = new Review({ content, rating, product })
+      const review = new Review({ content, rating, product, user })
       product.reviews.push(review)
       return Promise.all([review.save(), product.save()])
         .then(([review, product]) => product);

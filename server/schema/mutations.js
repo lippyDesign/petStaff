@@ -61,10 +61,12 @@ const mutation = new GraphQLObjectType({
             args: {
                 content: { type: GraphQLString },
                 rating: { type: GraphQLInt },
-                productId: { type: GraphQLID }
+                productId: { type: GraphQLID },
+                userId: { type: GraphQLID }
             },
-            resolve(parentValue, { content, rating, productId }) {
-                return Product.addReview(productId, content, rating);
+            resolve(parentValue, { content, rating, productId }, req) {
+                const userId = req.user.id;
+                return Product.addReview(productId, content, rating, userId);
             }
         },
         addColorToProduct: {

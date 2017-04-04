@@ -30,6 +30,16 @@ const RootQueryType = new GraphQLObjectType({
 				return Product.findById(id);
 			}
 		},
+		productsByIds: {
+			type: new GraphQLList(ProductType),
+			args: { ids: { type: new GraphQLList(GraphQLID) } },
+			resolve(parnetValue, { ids }) {
+				const prods = ids.map(id => {
+					Product.findById(id).then(prod => prod)
+				})
+				return prods;
+			}
+		},
 		review: {
 			type: ReviewType,
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },

@@ -16,6 +16,15 @@ const ReviewType = new GraphQLObjectType({
 		id: { type: GraphQLID },
 		content: { type: GraphQLString },
 		rating: { type: GraphQLInt },
+		user: {
+			type: require('./user_type'),
+			resolve(parentValue) {
+				return Review.findById(parentValue).populate('user')
+					.then(review => {
+						return review.user;
+					});
+			}
+		},
 		product: {
 			type: require('./product_type'),
 			resolve(parentValue) {

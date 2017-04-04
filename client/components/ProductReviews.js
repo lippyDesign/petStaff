@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+import { Link } from 'react-router';
+
+import query from '../queries/CurrentUser';
 
 import FormReview from './FormReview';
 
-export default class extends Component {
+class ProductReviews extends Component {
     renderRatingAndCount() {
         const { reviews } = this.props;
         if (reviews.length) {
@@ -12,7 +16,10 @@ export default class extends Component {
         return 
     }
     renderReviews() {
-        return this.props.reviews.map(review => <li key={'key'}>{review}</li>)
+        return this.props.reviews.map(({ id, content, rating, user }) => {
+            const stars = this.renderStars(rating);
+            return <li className="collection-item" key={id}><span className="title">{user.email} <span className="starsWrapper">{stars}</span></span><p>{content}</p></li>
+        });
     }
     renderRating() {
         const { reviews } = this.props;
@@ -24,32 +31,42 @@ export default class extends Component {
             return prev + curr.rating;
         }, 0);
         ratingSum = ratingSum / count;
-        const stars = []
-        while (ratingSum >= 1) {
-            stars.push(<i key={ratingSum} className="material-icons reviewHeaderStar">star_rate</i>);
-            ratingSum--;
-        }
-        if (ratingSum >= 0.5) {
-            stars.push(<i key={ratingSum} className="material-icons">star_half</i>);
-        }
+        const stars = this.renderStars(ratingSum);
         stars.push(<span className="reviewCount" key={`${count}reviews`}>{`${count} reviews`}</span>)
         return <span>{stars}</span>
     }
+    renderStars(num) {
+        const stars = []
+        while (num >= 1) {
+            stars.push(<i key={num} className="material-icons reviewHeaderStar">star_rate</i>);
+            num--;
+        }
+        if (num >= 0.5) {
+            stars.push(<i key={num} className="material-icons">star_half</i>);
+        }
+        return stars
+    }
+    renderFormOrMessage() {
+        if (this.props.data.user) {
+            const u = this.props.reviews.find(({ user }) => user.email === this.props.data.user.email);
+            if (u) {
+                return <li className="collection-item">You already reviewed this product</li>
+            } else {
+                return <li className="collection-item"><FormReview id={this.props.id} /></li>
+            }
+        }
+        return <li className="collection-item">Please <Link to='login'>Log In</Link> to leave a review</li>
+    }
     render() {
-        /*if(this.props.reviews.length) return <ul>{this.renderReviews()}</ul>
-        return <section className="productReviews">
-            <p>No reviews yet</p>*/
+        //console.log(this.props.reviews)
         return <section className="reviewSection">
             <ul className="collection with-header">
                 <li className="collection-item reviewHeader">{this.renderRating()}</li>
-                <li className="collection-item">
-                    <FormReview id={this.props.id} />
-                </li>
-                <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>
-                <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>
-                <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>
-                <li className="collection-item"><span className="title">Title</span><p>First Line</p></li>
+                {this.renderFormOrMessage()}
+                {this.renderReviews()}
             </ul>
         </section>
     }
 }
+
+export default graphql(query)(ProductReviews);

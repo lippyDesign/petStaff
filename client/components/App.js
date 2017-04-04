@@ -5,6 +5,10 @@ import Header from './Header';
 import Footer from './Footer';
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { cart: [] }
+    }
     componentWillMount() {
         const config = {
             apiKey: "AIzaSyAVZLEXbWmgu-2qnyLmqH3MoKPlDZ8hlek",
@@ -15,11 +19,17 @@ class App extends Component {
         };
         firebase.initializeApp(config);
     }
+    addToCart(item) {
+        this.setState({ cart: [...this.state.cart, item] })
+    }
+    countCartItems() {
+        return this.state.cart.length;
+    }
     render() {
         return <div className="site">
-            <Header/>
+            <Header cartTotalItems={this.countCartItems()}/>
             <main>
-                {this.props.children}
+                {React.cloneElement(this.props.children, { cart: this.state.cart, addToCart: this.addToCart.bind(this) })}
             </main>
             <Footer />
         </div>;

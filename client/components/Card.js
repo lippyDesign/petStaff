@@ -26,7 +26,10 @@ export default class extends Component {
     }
     addToCartClicked() {
         if (this.state.selectedSize && this.state.selectedColor) {
-            const product = { id: this.state.id, size: this.state.selectedSize, color: this.state.selectedColor };
+            const { price, priceSale, title} = this.props;
+            const pic = this.props.photos[0].url
+            const product = { id: this.state.id, size: this.state.selectedSize, color: this.state.selectedColor, title, pic, price, priceSale };
+            this.props.addToCart(product);
             Materialize.toast('Added to cart :)', 4000);
             this.setState({ cardRevealed: false });
         } else if (!this.state.selectedSize && this.state.selectedColor) {

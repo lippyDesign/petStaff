@@ -33,6 +33,9 @@ export default gql`
                 id
                 content
                 rating
+                user {
+                    email
+                }
             }
         }
     }
