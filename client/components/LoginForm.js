@@ -31,9 +31,9 @@ class LoginForm extends Component {
         });
     }
     render() {
-        return <div className="formWrapper">
+        return <div className="formWrapper textWhite">
             <h3 className="center-align">Login</h3>
-            <AuthForm errors={this.state.errors} onSubmit={this.onSubmit.bind(this)} />
+            <AuthForm errors={this.state.errors} onSubmit={this.onSubmit.bind(this)} buttonName="Login" />
         </div>;
     }
 }

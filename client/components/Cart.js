@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
 
 class Cart extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { guestCart: [] }
-    }
     renderGuestCart() {
         return this.props.cart.map(item => {
             const { pic, id, title, color, size, priceSale, price, shipping, quantity } = item;
@@ -42,7 +38,6 @@ class Cart extends Component {
                         </div>
                         <i onClick={() => this.props.removeFromCart(item)} className="material-icons cursorPointer">cancel</i>
                     </div>
-                    <div className="divider"></div>
                 </div>;
             }
         });
@@ -57,17 +52,17 @@ class Cart extends Component {
     }
     render() {
         if (!this.props.cart.length) {
-            return <section className="cart container">
+            return <section className="cart container textWhite">
             <h3 className="textCenter">Cart</h3>
-            <p>Cart is empty</p>
+            <p className="textCenter">You did not put any items into this cart yet.</p>
             <div className="standardFlex">
-                <Link to="products"><h4>Continue Shopping</h4></Link>
+                <button className="waves-effect waves-light btn  blue darken-2" onClick={() => hashHistory.push('products')}>Continue Shopping</button>
             </div>
         </section>
         }
         return <section className="cart container">
-            <h3 className="textCenter">Cart</h3>
-            <table className="centered bordered hide-on-small-only">
+            <h3 className="textCenter textWhite">Cart</h3>
+            <table className="centered bordered hide-on-small-only cartTable">
                 <thead>
                     <tr>
                         <th>Img</th>
@@ -81,18 +76,24 @@ class Cart extends Component {
                 </thead>
                 <tbody>
                     {this.renderGuestCart()}
+                    <tr>
+                        <td colSpan="7">
+                            <h4 className="title paddingLeftRightTwenty">${this.getTotalPrice()}</h4>
+                            <button className="waves-effect waves-light btn" onClick={() => hashHistory.push('checkout')}>Proceed To Checkout</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div className="hide-on-med-and-up">
                 {this.renderSmallGuestCart()}
             </div>
-            <div className="cartCheckoutSection">
-                <h4 className="title paddingLeftRightTwenty">${this.getTotalPrice()}</h4>
-                <button className="waves-effect waves-light btn">Proceed To Checkout</button>
+            <div className="cartCheckoutSection hide-on-med-and-up">
+                <h4 className="title">${this.getTotalPrice()}</h4>
+                <button className="waves-effect waves-light btn" onClick={() => hashHistory.push('checkout')}>Proceed To Checkout</button>
             </div>
-            <h6 className="textCenter">OR</h6>
+            <h6 className="textCenter textWhite">OR</h6>
             <div className="standardFlex">
-                <Link to="products"><h4>Continue Shopping</h4></Link>
+                <button className="waves-effect waves-light btn  blue darken-2" onClick={() => hashHistory.push('products')}>Continue Shopping</button>
             </div>
         </section>
     }

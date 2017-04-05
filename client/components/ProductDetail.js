@@ -51,7 +51,6 @@ class ProductDetail extends Component {
             </div>
             <div className="divider"></div>
             {this.renderStatsAndDescription()}
-            <div className="divider"></div>
             <div className="row">
                 <div className="col s12">
                     <ProductReviews reviews={reviews} id={id} />

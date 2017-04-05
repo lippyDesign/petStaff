@@ -19,6 +19,7 @@ import AdminLogin from './components/AdminLogin';
 import Admin from './components/Admin';
 import AddProduct from './components/AddProduct';
 import AdminProductList from './components/AdminProductList';
+import CheckOut from './components/CheckOut';
 
 import requireAuth from './components/requireAuth';
 
@@ -49,6 +50,7 @@ const Root = () => {
           <Route path="admin" component={Admin} />
           <Route path="addProduct" component={AddProduct} />
           <Route path="adminView" component={AdminProductList} />
+          <Route path="checkout" component={CheckOut} />
         </Route>
       </Router>
     </ApolloProvider>

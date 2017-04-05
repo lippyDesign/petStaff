@@ -28,7 +28,7 @@ class AuthForm extends Component {
                     />
                 </div>
                 {this.props.errors.map(error => <div className="textRed center-align" key={error}>{error}</div>)}
-                <button className="btn center-align col s12 l6 offset-l3">Submit</button>
+                <button className="btn center-align col s12 l6 offset-l3">{this.props.buttonName || 'Submit'}</button>
             </form>
         </div>;
     }

@@ -35,7 +35,7 @@ class Admin extends Component {
     render() {
         if (!this.state.user) {
             return <div className="row">
-                <form className="col s12 m6 offset-m3 l4 offset-l4" onSubmit={this.onSubmit.bind(this)}>
+                <form className="col s12 m6 offset-m3 l4 offset-l4 textWhite" onSubmit={this.onSubmit.bind(this)}>
                     <div className="input-field">
                         <input
                             value={this.state.email}
