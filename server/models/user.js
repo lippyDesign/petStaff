@@ -7,8 +7,46 @@ const Schema = mongoose.Schema;
 // plain text - see the authentication helpers below.
 const UserSchema = new Schema({
   email: String,
-  password: String
+  password: String,
+  shippingFirst: { type: String },
+  shippingLast: { type: String },
+  shippingEmail: { type: String },
+  shippingPhone: { type: String },
+  shippingStreet: { type: String },
+  shippingCity: { type: String },
+  shippingState: { type: String },
+  shippingZip: { type: String },
+  billingFirst: { type: String },
+  billingLast: { type: String },
+  billingEmail: { type: String },
+  billingPhone: { type: String },
+  billingStreet: { type: String },
+  billingCity: { type: String },
+  billingState: { type: String },
+  billingZip: { type: String },
+  cardNumber: { type: String },
+  cvv: { type: String },
+  orders: [{
+    type: Schema.Types.ObjectId,
+    ref: 'order'
+  }]
 });
+
+UserSchema.statics.addOrder = function(userId, orderId) {
+  const Order = mongoose.model('order');
+  return this.findById(id)
+    .then(user => {
+      const order = new Order({ amount, user })
+      user.orders.push(order)
+      return Promise.all([order.save(), user.save()])
+        .then(([order, user]) => user);
+    });
+}
+UserSchema.statics.findOrders = function(id) {
+  return this.findById(id)
+    .populate('orders')
+    .then(user => user.orders);
+}
 
 // The user's password is never saved in plain text.  Prior to saving the
 // user model, we 'salt' and 'hash' the users password.  This is a one way

@@ -16,6 +16,9 @@
 .cursorPointer {
     cursor: pointer;
 }
+.boldText {
+    font-weight: bold;
+}
 .standardFlex {
     display: flex;
     justify-content: center;
@@ -24,6 +27,10 @@
 }
 body {
     background-image: url("backgroundThree.jpg");
+}
+input:-webkit-autofill {
+    border-radius: 4px !important;
+    padding-left: 3px !important;
 }
 .title {
     font-size: 24px;
@@ -36,6 +43,10 @@ body {
 .paddingLeftRightTwenty {
     padding-left: 20px;
     padding-right: 20px;
+}
+.paddingLeftRightTen {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .site {
     display: flex;
@@ -107,7 +118,7 @@ main {
     padding-right: 5px;
     color: #D1D1D1;
 }
-.productListMain {
+.productListMain, .productSuggestedList {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -221,7 +232,7 @@ input[type="file"] {
 }
 .addProductForm {
     padding: 20px;
-    background-color: white;
+    background-color: rgb(245, 250, 244);
     border-radius: 4px;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -326,10 +337,10 @@ input[type="file"] {
     justify-content: center;
 }
 .productReviews {
-    background: orange;
+
 }
-.productRelated {
-    background: lightskyblue;
+.productSuggested {
+    
 }
 .backButtonContainer {
     display: flex;
@@ -464,5 +475,30 @@ input[type="file"] {
 .checkOutForm {
     background-color: rgb(245, 250, 244);
     padding: 10px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.checkoutListItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.orderSummary {
+    font-size: 24px;
+    font-weight: 300;
+}
+.orderSummary p {
+    margin-top: 10px;
+    text-align: center;
+}
+.homeMain {
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.homePageImage {
+    width: 280px;
     border-radius: 4px;
 }

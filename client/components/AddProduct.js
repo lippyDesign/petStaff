@@ -481,6 +481,4 @@ class AddProduct extends Component {
     }
 }
 
-// export default graphql(addProductMutation, { name: 'addProductMutation'})(AddProduct);
-
 export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AddProduct))))

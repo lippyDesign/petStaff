@@ -30,14 +30,27 @@ const RootQueryType = new GraphQLObjectType({
 				return Product.findById(id);
 			}
 		},
-		productsByIds: {
+		randomProducts: {
+			// will return 3 random products
 			type: new GraphQLList(ProductType),
-			args: { ids: { type: new GraphQLList(GraphQLID) } },
-			resolve(parnetValue, { ids }) {
-				const prods = ids.map(id => {
-					Product.findById(id).then(prod => prod)
-				})
-				return prods;
+			resolve() {
+				const getRandoms = (num, arr) => {
+					if (arr.length === 3) return arr;
+					const random = Math.floor(Math.random() * num);
+					if (arr.indexOf(random) !== -1) return getRandoms(num, arr);
+					arr.push(random);
+					return getRandoms(num, arr);
+				}
+				return Product.count()
+					.then(c => {
+						if (c <= 3) return Product.find({});
+						const randoms = getRandoms(c, []);
+						return randoms.map(random => {
+							return Product.findOne().skip(random).then(r => {
+								return r;
+							});
+						});
+					});
 			}
 		},
 		review: {

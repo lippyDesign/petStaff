@@ -4,9 +4,11 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLInt,
-    GraphQLID
+    GraphQLID,
+    GraphQLList
 } = graphql;
 
+const User = mongoose.model('user');
 const UserType = require('./types/user_type');
 const AuthService = require('../services/auth');
 const Product = mongoose.model('product');
@@ -15,6 +17,11 @@ const Color = mongoose.model('color');
 const ColorType = require('./types/color_type');
 const Size = mongoose.model('size');
 const SizeType = require('./types/size_type');
+const OrderType = require('./types/order_type');
+const Order = mongoose.model('order');
+const OrderItemType = require('./types/order_item_type');
+const OrderItem = mongoose.model('orderItem');
+
 
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -44,6 +51,44 @@ const mutation = new GraphQLObjectType({
             },
             resolve(parentValue, { title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix }) {
                 return (new Product({ title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix })).save();
+            }
+        },
+        addOrder: {
+            type: OrderType,
+            args: {
+                shippingName: { type: GraphQLString },
+                shippingAddress: { type: GraphQLString },
+                shippingPhone: { type: GraphQLString },
+                shippingEmail: { type: GraphQLString },
+                billingName: { type: GraphQLString},
+                billingAddress: { type: GraphQLString},
+                billingPhone: { type: GraphQLString },
+                billingEmail: { type: GraphQLString },
+                cardNumber: { type: GraphQLString },
+                cardExpiration: { type: GraphQLString},
+                cardCvv: { type: GraphQLString },
+                dateAndTime: { type: GraphQLString }
+            },
+            resolve(parentValue, { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime }, req) {
+                const user = req.user ? req.user.id : null;
+                return Order.addOrder( shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, user);
+            }
+        },
+        addItemToOrder: {
+            type: OrderType,
+            args: {
+                orderId: { type: GraphQLID },
+                color: { type: GraphQLString },
+                size: { type: GraphQLString },
+                title: { type: GraphQLString },
+                price: { type: GraphQLString },
+                priceSale: { type: GraphQLString },
+                shipping: { type: GraphQLString },
+                quantity: { type: GraphQLInt },
+                productId: { type: GraphQLID },
+            },
+            resolve(parentValue, { orderId, color, size, title, price, priceSale, shipping, quantity, productId }) {
+                return Order.addItem(orderId, color, size, title, price, priceSale, shipping, quantity, productId);
             }
         },
         addPhotoToProduct: {

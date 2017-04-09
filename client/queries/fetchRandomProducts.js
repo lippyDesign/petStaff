@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export default gql`
     {
-        products {
+        randomProducts {
             id
             title
             price

@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Link, hashHistory } from 'react-router';
-import { graphql } from 'react-apollo';
 
-import addOrderMutation from '../mutations/AddOrder';
-import addItemToOrderMutation from '../mutations/AddItemToOrder';
-
-class CheckOut extends Component {
+class UserInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,14 +24,10 @@ class CheckOut extends Component {
             billingState: '',
             billingZip: '',
             cardNumber: '',
-            cardCvv: '',
-            uploading: false,
-            completeOrder: null
+            cvv: ''
         }
     }
     componentDidMount() {
-        if (!this.props.cart.length) return hashHistory.push('products');
-
         const elementOne = ReactDOM.findDOMNode(this.refs.expMonth);
         const elementTwo = ReactDOM.findDOMNode(this.refs.expDate);
         $(elementOne).ready(function() {
@@ -46,66 +37,14 @@ class CheckOut extends Component {
             $('select').material_select();
         });
     }
-    renderItems() {
-        return this.props.cart.map(({ id, title, priceSale, price, quantity, color, size }) => {
-            const p = priceSale || price;
-            const pr = Number(p) * Number(quantity);
-            return <li key={`${id}${size}${color}`} className="collection-item checkoutListItem">
-                <div>
-                    <span className="boldText">{quantity}</span> x <Link to={`/products/${id}`}>{title}</Link><br />
-                    <span>{color}</span><br />
-                    <span>{size === 'oneSizeFitsAll' ? 'One Size Fits All' : size.toUpperCase()}</span>
-                </div>
-                <span>${pr.toFixed(2)}</span>
-            </li>
-        })
-    }
-    onSubmit(e) {
-        e.preventDefault();
-        this.setState({ uploading: true })
-        const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip,
-            cardNumber, cardCvv, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.state;
-        const shippingName = `${shippingFirst} ${shippingLast}`;
-        const shippingAddress = `${shippingStreet}, ${shippingCity}, ${shippingState}, ${shippingZip}`;
-        const billingName = sameAsShipping ? shippingName : `${billingFirst} ${billingLast}`;
-        const billingAddress = sameAsShipping ? shippingAddress : `${billingStreet}, ${billingCity}, ${billingState}, ${billingZip}`;
-        const expMonth = this.refs.expMonth.value;
-        const expYear = this.refs.expYear.value;
-        const cardExpiration = `${expMonth}/${expYear}`;
-        const dateAndTime = new Date();
+    onSubmit() {
 
-        const shippingVeryfied = [shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip].every(x => x.trim());
-        const cardVeryfied = [cardNumber, cardCvv, expMonth, expYear].every(x => x.trim());
-        let billingVeryfied = true;
-        if (!sameAsShipping) {
-            billingVeryfied = [billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip].every(x => x.trim());
-        }
-        if (!shippingVeryfied) Materialize.toast('Please check errors in shipping info', 4000);
-        if (!cardVeryfied) Materialize.toast('Please check errors in credit card info', 4000);
-        if (!billingVeryfied) Materialize.toast('Please check errors in billing info', 4000);
-        const allVerified = [shippingVeryfied, cardVeryfied, billingVeryfied].every(x => x);
-        if (!allVerified) return this.setState({ uploading: false });
-        this.props.addOrderMutation({
-            variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
-            // refetchQueries: [{ query }]
-        }).then(order => {
-            const orderId = order.data.addOrder.id;
-            this.props.cart.forEach(item => {
-                const { color, size, title, price, priceSale, shipping, quantity } = item;
-                return this.props.addItemToOrderMutation({
-                    variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
-                }).then(order => {
-                    console.log(order);
-                    hashHistory.push(`/orders/${order.data.addItemToOrder.id}`)
-                })
-            })
-        })
     }
     render() {
-        const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardCvv,
+        const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber,
         billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.state;
-        return <section className="checkOut container">
-            <h3 className="textWhite textCenter">Check Out</h3>
+        return <section className="userShippingInfo">
+            <h3 className="textCenter textWhite">User Info</h3>
             <form onSubmit={this.onSubmit.bind(this)} className="checkOutForm">
                 <h5>Shipping Info</h5>
                 <div className="row">
@@ -144,7 +83,7 @@ class CheckOut extends Component {
                         <input value={cardNumber} onChange={e => this.setState({cardNumber: e.target.value})} placeholder='Card Number' />
                     </div>
                      <div className="input-field col s12 m4">
-                        <select ref="expMonth" defaultValue="">
+                        <select ref="expMonth" defaultValue="none">
                             <option value="" disabled>Month</option>
                             <option value="1">1 January</option>
                             <option value="2">2 February</option>
@@ -181,7 +120,7 @@ class CheckOut extends Component {
                         </select>      
                     </div>
                     <div className="input-field col s12 m4">
-                        <input value={cardCvv} onChange={e => this.setState({cardCvv: e.target.value})} placeholder='cvv' />
+                        <input value={this.state.cvv} onChange={e => this.setState({cvv: e.target.value})} placeholder='CVV' />
                     </div>
                 </div>
                 <h5>Billing Info</h5>
@@ -219,26 +158,12 @@ class CheckOut extends Component {
                         <input value={sameAsShipping ? shippingZip : billingZip} onChange={e => this.setState({billingZip: e.target.value})} placeholder='Zip Code' />
                     </div>
                 </div>
-                <h5>Your Order</h5>
                 <div className="row">
-                    <ul className="col s12 collection">
-                        {this.renderItems()}
-                    </ul>
-                    <div className="orderSummary">
-                        <p>Order: ${this.props.allItemsCost.toFixed(2)}</p>
-                        <p>Shipping: ${this.props.allShippingCost.toFixed(2)}</p>
-                        <p>Total: ${this.props.totalCost.toFixed(2)}</p>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col s12">
-                        {this.state.errors.map(error => <div className="textRed center-align" key={error}>{error}</div>)}
-                    </div>
-                    {this.state.uploading ? <div className="row"><div className="progress col s12 m6 offset-m3"><div className="indeterminate"></div></div></div> : <button className="btn center-align col s12 m6 offset-m3">Purchase</button>}
+                    <button className="btn center-align col s12 m6 offset-m3">Save</button>
                 </div>
             </form>
         </section>
     }
 }
 
-export default graphql(addOrderMutation, {name: 'addOrderMutation'})(graphql(addItemToOrderMutation, {name : 'addItemToOrderMutation'})(CheckOut));
+export default UserInfo;

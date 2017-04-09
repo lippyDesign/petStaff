@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export default () => <footer className="page-footer grey darken-4">
     <div className="container">
@@ -13,7 +14,7 @@ export default () => <footer className="page-footer grey darken-4">
                     <li><a className="grey-text text-lighten-3" href="#!">Link 1</a></li>
                     <li><a className="grey-text text-lighten-3" href="#!">Link 2</a></li>
                     <li><a className="grey-text text-lighten-3" href="#!">Link 3</a></li>
-                    <li><a className="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                    <li><Link className="grey-text text-lighten-3" to="contact">Contact Us</Link></li>
                 </ul>
             </div>
         </div>
@@ -21,7 +22,7 @@ export default () => <footer className="page-footer grey darken-4">
     <div className="footer-copyright black">
         <div className="container">
             LOGO © 2017 Company Name Inc. All rights reserved.
-            <a className="grey-text text-lighten-4 right" href="#!">More Links</a>
+            <a target="_blank" className="grey-text text-lighten-4 right" href="https://github.com/lippyDesign">Created by LippyDesign</a>
         </div>
     </div>
 </footer>;
