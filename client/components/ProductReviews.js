@@ -18,7 +18,7 @@ class ProductReviews extends Component {
     renderReviews() {
         return this.props.reviews.map(({ id, content, rating, user }) => {
             const stars = this.renderStars(rating);
-            return <li className="collection-item" key={id}><span className="title">{user.email} <span className="starsWrapper">{stars}</span></span><p>{content}</p></li>
+            return <li className="collection-item" key={id}><span className="title">{user ? user.email : 'unknown'} <span className="starsWrapper">{stars}</span></span><p>{content}</p></li>
         });
     }
     renderRating() {

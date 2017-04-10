@@ -25,6 +25,7 @@ const UserSchema = new Schema({
   billingState: { type: String },
   billingZip: { type: String },
   cardNumber: { type: String },
+  cardExpiration: { type: String },
   cvv: { type: String },
   orders: [{
     type: Schema.Types.ObjectId,

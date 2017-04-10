@@ -13,7 +13,6 @@ class UserInfo extends Component {
             shippingCity: '',
             shippingState: '',
             shippingZip: '',
-            errors: [],
             sameAsShipping: false,
             billingFirst: '',
             billingLast: '',
@@ -24,12 +23,50 @@ class UserInfo extends Component {
             billingState: '',
             billingZip: '',
             cardNumber: '',
-            cvv: ''
+            cardExpiration: '',
+            cvv: '',
+            mo: '',
+            ye: ''
         }
+    }
+    componentWillMount() {
+        let mo = '';
+        let ye = '';
+        if (this.props.userInfo.cardExpiration) {
+            const exp = this.props.userInfo.cardExpiration.split('/');
+            mo = exp[0];
+            ye = exp[1];
+            this.setState({ mo, ye })
+        }
+        console.log(mo)
+        console.log(ye)
     }
     componentDidMount() {
         const elementOne = ReactDOM.findDOMNode(this.refs.expMonth);
         const elementTwo = ReactDOM.findDOMNode(this.refs.expDate);
+        let { shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardExpiration, cvv,
+        billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.props.userInfo;
+        this.setState({
+            shippingFirst: shippingFirst || '',
+            shippingLast: shippingLast || '',
+            shippingEmail: shippingEmail || '',
+            shippingPhone: shippingPhone || '',
+            shippingStreet: shippingStreet || '',
+            shippingCity: shippingCity || '',
+            shippingState: shippingState || '',
+            shippingZip: shippingZip || '',
+            cardNumber: cardNumber || '',
+            cardExpiration: cardExpiration || '',
+            cvv: cvv || '',
+            billingFirst: billingFirst || '',
+            billingLast: billingLast || '',
+            billingEmail: billingEmail || '',
+            billingPhone: billingPhone || '',
+            billingStreet: billingStreet || '',
+            billingCity: billingCity || '',
+            billingState: billingState || '',
+            billingZip: billingZip || ''
+        })
         $(elementOne).ready(function() {
             $('select').material_select();
         });
@@ -41,11 +78,14 @@ class UserInfo extends Component {
 
     }
     render() {
-        const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber,
+        console.log(this.props.userInfo)
+        const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardExpiration, cvv,
         billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.state;
         return <section className="userShippingInfo">
             <h3 className="textCenter textWhite">User Info</h3>
             <form onSubmit={this.onSubmit.bind(this)} className="checkOutForm">
+                <h5>Account Info</h5>
+                <div className="row"><p className="paddingLeftRightTwenty">{this.props.userInfo.email}</p></div>
                 <h5>Shipping Info</h5>
                 <div className="row">
                     <div className="input-field col s12 m6">
@@ -83,7 +123,7 @@ class UserInfo extends Component {
                         <input value={cardNumber} onChange={e => this.setState({cardNumber: e.target.value})} placeholder='Card Number' />
                     </div>
                      <div className="input-field col s12 m4">
-                        <select ref="expMonth" defaultValue="none">
+                        <select ref="expMonth" defaultValue={this.state.mo}>
                             <option value="" disabled>Month</option>
                             <option value="1">1 January</option>
                             <option value="2">2 February</option>
@@ -101,7 +141,7 @@ class UserInfo extends Component {
                         <label>Expiration</label>
                     </div>
                     <div className="input-field col s12 m4">
-                        <select ref="expYear" defaultValue="">
+                        <select ref="expYear" defaultValue={this.state.ye}>
                             <option value="" disabled>Year</option>
                             <option value="2017">2017</option>
                             <option value="2018">2018</option>
@@ -165,5 +205,4 @@ class UserInfo extends Component {
         </section>
     }
 }
-
 export default UserInfo;

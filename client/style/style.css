@@ -25,17 +25,6 @@
     align-items: center;
     flex-wrap: wrap;
 }
-body {
-    background-image: url("backgroundThree.jpg");
-}
-input:-webkit-autofill {
-    border-radius: 4px !important;
-    padding-left: 3px !important;
-}
-.title {
-    font-size: 24px;
-    font-weight: 300;
-}
 .paddingTopBottomFifty {
     padding-top: 50px;
     padding-bottom: 50px;
@@ -47,6 +36,17 @@ input:-webkit-autofill {
 .paddingLeftRightTen {
     padding-left: 10px;
     padding-right: 10px;
+}
+body {
+    background-image: url("backgroundThree.jpg");
+}
+input:-webkit-autofill {
+    border-radius: 4px !important;
+    padding-left: 3px !important;
+}
+.title {
+    font-size: 24px;
+    font-weight: 300;
 }
 .site {
     display: flex;
@@ -501,4 +501,8 @@ input[type="file"] {
 .homePageImage {
     width: 280px;
     border-radius: 4px;
+}
+.accountLabel {
+    position: relative;
+    top: -20px;
 }

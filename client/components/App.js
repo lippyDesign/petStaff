@@ -84,6 +84,9 @@ class App extends Component {
             return prev + t;
         }, 0);
     }
+    emptyCart() {
+        this.setState({ cart: [] })
+    }
     render() {
         return <div className="site">
             <Header cartTotalItems={this.countCartItems()}/>
@@ -95,6 +98,7 @@ class App extends Component {
                         increaseByOne: this.increaseByOne.bind(this),
                         decreaseByOne: this.decreaseByOne.bind(this),
                         removeFromCart: this.removeFromCart.bind(this),
+                        emptyCart: this.emptyCart.bind(this),
                         allItemsCost: this.getAllItemsCost(),
                         allShippingCost: this.getAllShippingCost(),
                         totalCost: this.getTotlalCost()

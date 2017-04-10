@@ -159,10 +159,31 @@ const mutation = new GraphQLObjectType({
             type: UserType,
             args: {
                 email: { type: GraphQLString },
-                password: { type: GraphQLString }
+                password: { type: GraphQLString },
+                shippingFirst: { type: GraphQLString },
+                shippingLast: { type: GraphQLString },
+                shippingEmail: { type: GraphQLString },
+                shippingPhone: { type: GraphQLString },
+                shippingStreet: { type: GraphQLString },
+                shippingCity: { type: GraphQLString },
+                shippingState: { type: GraphQLString },
+                shippingZip: { type: GraphQLString },
+                billingFirst: { type: GraphQLString },
+                billingLast: { type: GraphQLString },
+                billingEmail: { type: GraphQLString },
+                billingPhone: { type: GraphQLString },
+                billingStreet: { type: GraphQLString },
+                billingCity: { type: GraphQLString },
+                billingState: { type: GraphQLString },
+                billingZip: { type: GraphQLString },
+                cardNumber: { type: GraphQLString },
+                cardExpiration: { type: GraphQLString },
+                cvv: { type: GraphQLString }
             },
-            resolve(parentValue, { email, password }, req) {
-                return AuthService.signup({ email, password, req });
+            resolve(parentValue, { email, password, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip,
+                 billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv }, req) {
+                return AuthService.signup({ email, password, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip,
+                 billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv, req });
             }
         },
         logout: {

@@ -26,6 +26,7 @@ const UserType = new GraphQLObjectType({
         billingState: { type: GraphQLString },
         billingZip: { type: GraphQLString },
         cardNumber: { type: GraphQLString },
+        cardExpiration: { type: GraphQLString },
         cvv: { type: GraphQLString },
         orders: {
             type: new GraphQLList(OrderType),

@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import { Link, hashHistory } from 'react-router';
 import { graphql } from 'react-apollo';
 
+import signUpMutation from '../mutations/Signup';
 import addOrderMutation from '../mutations/AddOrder';
 import addItemToOrderMutation from '../mutations/AddItemToOrder';
+import currentUserQuery from '../queries/CurrentUser';
 
 class CheckOut extends Component {
     constructor(props) {
@@ -31,7 +33,8 @@ class CheckOut extends Component {
             cardNumber: '',
             cardCvv: '',
             uploading: false,
-            completeOrder: null
+            createAccount: true,
+            password: ''
         }
     }
     componentDidMount() {
@@ -60,11 +63,49 @@ class CheckOut extends Component {
             </li>
         })
     }
+    showUserCreateForm() {
+        const currentUser = this.props.currentUserQuery;
+        if (!currentUser.user && !this.state.createAccount) {
+            return <div className="textCenter row">
+                <h5>Account Info</h5>
+                <div>
+                    <span>
+                        <input type="checkbox" id="createAccount" onChange={() => this.setState({ createAccount: !this.state.createAccount })} checked={this.state.createAccount} />
+                        <label htmlFor="createAccount">Create Account</label>
+                    </span>
+                </div>
+            </div>;
+        }
+        if (!currentUser.user) {
+            return <div className="row">
+                <h5 className="textCenter">Account Info</h5>
+                <div className="textCenter">
+                    <span>
+                        <input type="checkbox" id="createAccount" onChange={() => this.setState({ createAccount: !this.state.createAccount })} checked={this.state.createAccount} />
+                        <label htmlFor="createAccount">Create Account</label>
+                    </span>
+                </div>
+                <div className="input-field col s12 m4 offset-m4">
+                    <lable>{this.state.shippingEmail}</lable>
+                </div>
+                <div className="input-field col s12 m4 offset-m4">
+                    <input value={this.state.password} onChange={e => this.setState({password: e.target.value})} placeholder='account password' type='password' />
+                </div>
+            </div>;
+        }
+        return <div className="textCenter row">
+            <div className="divider"></div>
+            <h5>Account Info</h5>
+            <div className="input-field col s12 accountLabel">
+                <lable>{currentUser.user.email}</lable>
+            </div>
+        </div>;
+    }
     onSubmit(e) {
         e.preventDefault();
         this.setState({ uploading: true })
         const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip,
-            cardNumber, cardCvv, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.state;
+            cardNumber, cardCvv, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, password } = this.state;
         const shippingName = `${shippingFirst} ${shippingLast}`;
         const shippingAddress = `${shippingStreet}, ${shippingCity}, ${shippingState}, ${shippingZip}`;
         const billingName = sameAsShipping ? shippingName : `${billingFirst} ${billingLast}`;
@@ -73,7 +114,8 @@ class CheckOut extends Component {
         const expYear = this.refs.expYear.value;
         const cardExpiration = `${expMonth}/${expYear}`;
         const dateAndTime = new Date();
-
+        const currentUser = this.props.currentUserQuery;
+        // validation
         const shippingVeryfied = [shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip].every(x => x.trim());
         const cardVeryfied = [cardNumber, cardCvv, expMonth, expYear].every(x => x.trim());
         let billingVeryfied = true;
@@ -83,23 +125,100 @@ class CheckOut extends Component {
         if (!shippingVeryfied) Materialize.toast('Please check errors in shipping info', 4000);
         if (!cardVeryfied) Materialize.toast('Please check errors in credit card info', 4000);
         if (!billingVeryfied) Materialize.toast('Please check errors in billing info', 4000);
+        if (!currentUser.user && this.state.createAccount) {
+            if (password.trim().length < 4) {
+                Materialize.toast('Please check account password', 4000);
+                return this.setState({ uploading: false });
+            }
+        }
         const allVerified = [shippingVeryfied, cardVeryfied, billingVeryfied].every(x => x);
         if (!allVerified) return this.setState({ uploading: false });
-        this.props.addOrderMutation({
-            variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
-            // refetchQueries: [{ query }]
-        }).then(order => {
-            const orderId = order.data.addOrder.id;
-            this.props.cart.forEach(item => {
-                const { color, size, title, price, priceSale, shipping, quantity } = item;
-                return this.props.addItemToOrderMutation({
-                    variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
+        //create user if necessary and then place order
+        if (!currentUser.user && this.state.createAccount) {
+            const bf = sameAsShipping ? shippingFirst : billingFirst ;
+            const bl = sameAsShipping ? shippingLast : billingLast;
+            const be = sameAsShipping ? shippingEmail : billingEmail;
+            const bp = sameAsShipping ? shippingPhone : billingPhone;
+            const bs = sameAsShipping ? shippingStreet : billingStreet;
+            const bc = sameAsShipping ? shippingCity : billingCity;
+            const bst = sameAsShipping ? shippingState : billingState;
+            const bz = sameAsShipping ? shippingZip : billingZip;
+            this.props.signUpMutation({
+                variables: {
+                    email: shippingEmail,
+                    password,
+                    shippingFirst,
+                    shippingLast,
+                    shippingEmail,
+                    shippingPhone,
+                    shippingStreet,
+                    shippingCity,
+                    shippingState,
+                    shippingZip,
+                    billingFirst: bf,
+                    billingLast: bl,
+                    billingEmail: be,
+                    billingPhone: bp,
+                    billingStreet: bs,
+                    billingCity: bc,
+                    billingState: bst,
+                    billingZip: bz,
+                    cardNumber,
+                    cardExpiration,
+                    cvv: cardCvv
+                },
+                refetchQueries: [{ query: currentUserQuery }]
+            })
+            .then(() => {
+                //submit order
+                this.props.addOrderMutation({
+                    variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
+                    // refetchQueries: [{ query }]
                 }).then(order => {
-                    console.log(order);
-                    hashHistory.push(`/orders/${order.data.addItemToOrder.id}`)
+                    const orderId = order.data.addOrder.id;
+                    this.props.cart.forEach(item => {
+                        const { color, size, title, price, priceSale, shipping, quantity } = item;
+                        return this.props.addItemToOrderMutation({
+                            variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
+                        }).then(order => {
+                            this.props.emptyCart();
+                            hashHistory.push('orderplaced');
+                        })
+                    })
                 })
             })
-        })
+            .catch(res => {
+                const errors = res.graphQLErrors.map(error => error.message);
+                errors.forEach(err => Materialize.toast(err, 4000));
+                return this.setState({ uploading: false });
+            });
+        } else { // if no user to create, simply place order
+            this.props.signUpMutation({
+                variables: { shippingEmail, password },
+                refetchQueries: [{ query: currentUserQuery }]
+            })
+            .catch(res => {
+                const errors = res.graphQLErrors.map(error => error.message);
+                errors.forEach(err => Materialize.toast(err, 4000));
+                return this.setState({ uploading: false });
+            });
+            //submit order
+            this.props.addOrderMutation({
+                variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
+                // refetchQueries: [{ query }]
+            }).then(order => {
+                const orderId = order.data.addOrder.id;
+                this.props.cart.forEach(item => {
+                    const { color, size, title, price, priceSale, shipping, quantity } = item;
+                    return this.props.addItemToOrderMutation({
+                        variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
+                    }).then(order => {
+                        this.props.emptyCart();
+                        hashHistory.push('orderplaced');
+                    })
+                })
+            })
+        }
     }
     render() {
         const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardCvv,
@@ -230,10 +349,9 @@ class CheckOut extends Component {
                         <p>Total: ${this.props.totalCost.toFixed(2)}</p>
                     </div>
                 </div>
+                <div className="divider"></div>
+                {this.showUserCreateForm()}
                 <div className="row">
-                    <div className="col s12">
-                        {this.state.errors.map(error => <div className="textRed center-align" key={error}>{error}</div>)}
-                    </div>
                     {this.state.uploading ? <div className="row"><div className="progress col s12 m6 offset-m3"><div className="indeterminate"></div></div></div> : <button className="btn center-align col s12 m6 offset-m3">Purchase</button>}
                 </div>
             </form>
@@ -241,4 +359,4 @@ class CheckOut extends Component {
     }
 }
 
-export default graphql(addOrderMutation, {name: 'addOrderMutation'})(graphql(addItemToOrderMutation, {name : 'addItemToOrderMutation'})(CheckOut));
+export default graphql(signUpMutation, { name: 'signUpMutation' })(graphql(currentUserQuery, { name: 'currentUserQuery' })(graphql(addOrderMutation, {name: 'addOrderMutation'})(graphql(addItemToOrderMutation, {name : 'addItemToOrderMutation'})(CheckOut))));

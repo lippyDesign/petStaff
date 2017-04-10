@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+
+import currentUserQuery from '../queries/CurrentUser';
 
 import UserOrderHistory from './UserOrderHistory';
 import UserInfo from './UserInfo';
@@ -6,13 +9,14 @@ import UserDeleteAccount from './UserDeleteAccount';
 
 class Dashboard extends Component {
     render() {
+        if (!this.props.currentUserQuery.user) return <div/>
         return <section className="dashboard container">
             <div className="row">
                 <div className="col s12 l6">
-                    <UserOrderHistory />
+                    <UserOrderHistory userOrders={this.props.currentUserQuery.user.orders} />
                 </div>
                 <div className="col s12 l6">
-                    <UserInfo />
+                    <UserInfo userInfo={this.props.currentUserQuery.user} />
                 </div>
                 <div className="col s12 l4 offset-l4">
                     <UserDeleteAccount />
@@ -21,4 +25,4 @@ class Dashboard extends Component {
         </section>;
     }
 }
-export default Dashboard;
+export default graphql(currentUserQuery, { name: 'currentUserQuery' })(Dashboard);
