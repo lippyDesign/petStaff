@@ -11,6 +11,7 @@ const OrderItem = mongoose.model('orderItem');
 const OrderItemType = new GraphQLObjectType({
     name: 'OrderItemType',
     fields: () => ({
+        id: { type: GraphQLID },
         color: { type: GraphQLString },
         size: { type: GraphQLString },
         title: { type: GraphQLString },

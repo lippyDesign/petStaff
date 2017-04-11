@@ -71,18 +71,15 @@ class App extends Component {
     }
     getAllShippingCost() {
         return this.state.cart.reduce((prev, curr) => {
-            if (curr.shipping) return prev + (curr.quantity * Number(curr.shipping));
-            else return prev + 0;
+            if (curr.shipping) {
+                const itemTotal = curr.quantity * Number(curr.shipping);
+                return prev + itemTotal;
+            }
+            return prev;
         }, 0);
     }
     getTotlalCost() {
-        return this.state.cart.reduce((prev, curr) => {
-            const p = curr.priceSale || curr.price;
-            const pr = Number(p) * curr.quantity;
-            const s = curr.shipping || '0';
-            const t = pr + Number(s)
-            return prev + t;
-        }, 0);
+        return this.getAllItemsCost() + this.getAllShippingCost();
     }
     emptyCart() {
         this.setState({ cart: [] })

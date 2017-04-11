@@ -19,7 +19,7 @@ class Dashboard extends Component {
                     <UserInfo userInfo={this.props.currentUserQuery.user} />
                 </div>
                 <div className="col s12 l4 offset-l4">
-                    <UserDeleteAccount />
+                    <UserDeleteAccount userEmail={this.props.currentUserQuery.user.email} userId={this.props.currentUserQuery.user.id} />
                 </div>
             </div>
         </section>;

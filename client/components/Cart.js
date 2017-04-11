@@ -7,7 +7,7 @@ class Cart extends Component {
         return this.props.cart.map(item => {
             const { pic, id, title, color, size, priceSale, price, shipping, quantity } = item;
             const s = size === 'oneSizeFitsAll' ? 'One size fits all' : size.toUpperCase();
-            const p = shipping ? Number(shipping) + Number(priceSale || price) : Number(priceSale || price);
+            const p = Number(priceSale || price);
             if (quantity > 0) {
                 return <tr key={`${id}${color}${size}`}>
                     <td><img className="cartItemImg" src={pic} /></td>
@@ -25,7 +25,7 @@ class Cart extends Component {
         return this.props.cart.map(item => {
             const { pic, id, title, color, size, priceSale, price, shipping, quantity } = item;
             const s = size === 'oneSizeFitsAll' ? 'One size fits all' : size.toUpperCase();
-            const p = shipping ? Number(shipping) + Number(priceSale || price) : Number(priceSale || price);
+            const p = Number(priceSale || price);
             if (quantity > 0) {
                 return <div key={`${id}${color}${size}`} className="smallCartItem">
                     <img className="responsive-img" src={pic} />
@@ -42,14 +42,7 @@ class Cart extends Component {
             }
         });
     }
-    getTotalPrice() {
-        const num = this.props.cart.reduce((prev, curr) => {
-            const p = curr.priceSale || curr.price;
-            const s = curr.shipping || "0";
-            return (Number(p) + Number(s)) * curr.quantity + prev
-        }, 0);
-        return num.toFixed(2);
-    }
+
     render() {
         if (!this.props.cart.length) {
             return <section className="cart container textWhite">
@@ -78,7 +71,7 @@ class Cart extends Component {
                     {this.renderGuestCart()}
                     <tr>
                         <td colSpan="7">
-                            <h4 className="title paddingLeftRightTwenty">${this.getTotalPrice()}</h4>
+                            <h4 className="title paddingLeftRightTwenty">${this.props.allItemsCost.toFixed(2)}</h4>
                             <button className="waves-effect waves-light btn" onClick={() => hashHistory.push('checkout')}>Proceed To Checkout</button>
                         </td>
                     </tr>
@@ -88,7 +81,7 @@ class Cart extends Component {
                 {this.renderSmallGuestCart()}
             </div>
             <div className="cartCheckoutSection hide-on-med-and-up">
-                <h4 className="title">${this.getTotalPrice()}</h4>
+                <h4 className="title">${this.props.allItemsCost.toFixed(2)}</h4>
                 <button className="waves-effect waves-light btn" onClick={() => hashHistory.push('checkout')}>Proceed To Checkout</button>
             </div>
             <h6 className="textCenter textWhite">OR</h6>

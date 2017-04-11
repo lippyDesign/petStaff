@@ -74,7 +74,7 @@ main {
 }
 .sideNav {
     position: fixed;
-    width: 300px;
+    width: 280px;
     right: -105%;
     top: 0;
     margin: 0;
@@ -505,4 +505,25 @@ input[type="file"] {
 .accountLabel {
     position: relative;
     top: -20px;
+}
+.orderHistoryList {
+    border-radius: 4px;
+}
+.expMonthAndYearSelector, .expMonthAndYear {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.expirationLabel {
+    position: relative;
+    top: 15px;
+}
+.cvvInput {
+    margin-left: 15px;
+}
+.badge {
+    cursor: pointer;
+}
+.expSelectorList li {
+    cursor: pointer;
 }

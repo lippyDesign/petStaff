@@ -48,6 +48,12 @@ UserSchema.statics.findOrders = function(id) {
     .populate('orders')
     .then(user => user.orders);
 }
+UserSchema.statics.updateUser = function(req, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv) {
+  return this.findById(req.user.id)
+    .then(user => {
+      return user.update({ shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv })
+    })
+}
 
 // The user's password is never saved in plain text.  Prior to saving the
 // user model, we 'salt' and 'hash' the users password.  This is a one way

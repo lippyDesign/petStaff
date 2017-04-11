@@ -203,6 +203,41 @@ const mutation = new GraphQLObjectType({
             resolve(parentValue, { email, password }, req) {
                 return AuthService.login({ email, password, req });
             }
+        },
+        updateUser: {
+            type: UserType,
+            args: {
+                id: { type: GraphQLID },
+                shippingFirst: { type: GraphQLString },
+                shippingLast: { type: GraphQLString },
+                shippingEmail: { type: GraphQLString },
+                shippingPhone: { type: GraphQLString },
+                shippingStreet: { type: GraphQLString },
+                shippingCity: { type: GraphQLString },
+                shippingState: { type: GraphQLString },
+                shippingZip: { type: GraphQLString },
+                billingFirst: { type: GraphQLString },
+                billingLast: { type: GraphQLString },
+                billingEmail: { type: GraphQLString },
+                billingPhone: { type: GraphQLString },
+                billingStreet: { type: GraphQLString },
+                billingCity: { type: GraphQLString },
+                billingState: { type: GraphQLString },
+                billingZip: { type: GraphQLString },
+                cardNumber: { type: GraphQLString },
+                cardExpiration: { type: GraphQLString },
+                cvv: { type: GraphQLString }
+            },
+            resolve(parentValue, { shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv }, req) {
+                return User.updateUser(req, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, cardNumber, cardExpiration, cvv);
+            }
+        },
+        deleteUser: {
+            type: UserType,
+            args: { id: { type: GraphQLID } },
+            resolve(parentValue, { id }) {
+                return User.remove({ _id: id });
+            }
         }
     }
 });

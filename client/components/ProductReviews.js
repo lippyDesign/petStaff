@@ -48,7 +48,10 @@ class ProductReviews extends Component {
     }
     renderFormOrMessage() {
         if (this.props.data.user) {
-            const u = this.props.reviews.find(({ user }) => user.email === this.props.data.user.email);
+            const u = this.props.reviews.find(({ user }) => {
+                if (!user) return false;
+                return user.email === this.props.data.user.email
+            });
             if (u) {
                 return <li className="collection-item">You already reviewed this product</li>
             } else {

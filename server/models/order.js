@@ -50,4 +50,10 @@ OrderSchema.statics.addItem = function(orderId, color, size,title, price, priceS
     });
 }
 
+OrderSchema.statics.findOrderItems = function(id) {
+  return this.findById(id)
+    .populate('orderItems')
+    .then(order => order.orderItems);
+}
+
 mongoose.model('order', OrderSchema);

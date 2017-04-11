@@ -27,6 +27,11 @@ export default gql`
             orders {
                 id
                 dateAndTime
+                orderItems {
+                    id
+                    title
+                    quantity
+                }
             }
         }
     }

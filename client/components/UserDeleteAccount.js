@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+
+import deleteUserMutation from '../mutations/DeleteUser';
+import loginMutation from '../mutations/Login';
+import query from '../queries/CurrentUser';
 
 class UserDeleteAccount extends Component {
     constructor(props) {
         super(props);
         this.state = { password: '' }
     }
-    onSubmit() {
-
+    onSubmit(e) {
+        e.preventDefault();
+        return this.props.loginMutation({
+            variables: { email: this.props.userEmail, password: this.state.password },
+        })
+        .then(() => {
+            return this.props.deleteUserMutation({
+                variables: { id: this.props.userId },
+                refetchQueries: [{ query }]
+            })
+        })
+        .catch(res => {
+            const errors = res.graphQLErrors.map(error => error.message);
+            errors.map(error => Materialize.toast(error, 4000));
+        });
     }
     render() {
         return <section className="userDeleteAccount">
@@ -26,4 +44,4 @@ class UserDeleteAccount extends Component {
     }
 }
 
-export default UserDeleteAccount;
+export default graphql(loginMutation, { name: 'loginMutation' })(graphql(deleteUserMutation, { name: 'deleteUserMutation' })(UserDeleteAccount));

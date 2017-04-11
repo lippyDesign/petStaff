@@ -39,10 +39,7 @@ const OrderType = new GraphQLObjectType({
         orderItems: {
             type: new GraphQLList(OrderItemType),
             resolve(parentValue) {
-                return Order.findById(parentValue).populate('orderItem')
-                    .then(order => {
-                        return order.orderItems
-                    });
+                return Order.findOrderItems(parentValue.id);
             }
         }
     })

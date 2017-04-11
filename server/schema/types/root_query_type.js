@@ -7,6 +7,8 @@ const ProductType = require('./product_type');
 const Product = mongoose.model('product');
 const ReviewType = require('./review_type');
 const Review = mongoose.model('review');
+const OrderType = require('./order_type');
+const Order = mongoose.model('order');
 
 const RootQueryType = new GraphQLObjectType({
 	name: 'RootQueryType',
@@ -58,6 +60,13 @@ const RootQueryType = new GraphQLObjectType({
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },
 			resolve(parnetValue, { id }) {
 				return Review.findById(id);
+			}
+		},
+		order: {
+			type: OrderType,
+			args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+			resolve(parnetValue, { id }) {
+				return Order.findById(id);
 			}
 		}
 	}

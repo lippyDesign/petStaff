@@ -34,20 +34,49 @@ class CheckOut extends Component {
             cardCvv: '',
             uploading: false,
             createAccount: true,
-            password: ''
+            password: '',
+            monthOrYearVisible: false,
+            monthVisible: false,
+            yearVisible: ''
         }
     }
     componentDidMount() {
+        // if no items in cart, send user to products page
         if (!this.props.cart.length) return hashHistory.push('products');
-
-        const elementOne = ReactDOM.findDOMNode(this.refs.expMonth);
-        const elementTwo = ReactDOM.findDOMNode(this.refs.expDate);
-        $(elementOne).ready(function() {
-            $('select').material_select();
-        });
-        $(elementTwo).ready(function() {
-            $('select').material_select();
-        });
+        // populate form
+        if (this.props.currentUserQuery.user) {
+            let { shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardExpiration, cvv,
+            billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip} = this.props.currentUserQuery.user;
+            let mo = '';
+            let ye = '';
+            if (cardExpiration) {
+                const exp = cardExpiration.split('/');
+                mo = exp[0];
+                ye = exp[1];
+            }
+            this.setState({
+                shippingFirst: shippingFirst || '',
+                shippingLast: shippingLast || '',
+                shippingEmail: shippingEmail || '',
+                shippingPhone: shippingPhone || '',
+                shippingStreet: shippingStreet || '',
+                shippingCity: shippingCity || '',
+                shippingState: shippingState || '',
+                shippingZip: shippingZip || '',
+                cardNumber: cardNumber || '',
+                cardCvv: cvv || '',
+                billingFirst: billingFirst || '',
+                billingLast: billingLast || '',
+                billingEmail: billingEmail || '',
+                billingPhone: billingPhone || '',
+                billingStreet: billingStreet || '',
+                billingCity: billingCity || '',
+                billingState: billingState || '',
+                billingZip: billingZip || '',
+                ye,
+                mo
+            })
+        }
     }
     renderItems() {
         return this.props.cart.map(({ id, title, priceSale, price, quantity, color, size }) => {
@@ -105,15 +134,16 @@ class CheckOut extends Component {
         e.preventDefault();
         this.setState({ uploading: true })
         const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip,
-            cardNumber, cardCvv, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, password } = this.state;
+            cardNumber, cardCvv, billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, password, mo, ye } = this.state;
         const shippingName = `${shippingFirst} ${shippingLast}`;
         const shippingAddress = `${shippingStreet}, ${shippingCity}, ${shippingState}, ${shippingZip}`;
         const billingName = sameAsShipping ? shippingName : `${billingFirst} ${billingLast}`;
         const billingAddress = sameAsShipping ? shippingAddress : `${billingStreet}, ${billingCity}, ${billingState}, ${billingZip}`;
-        const expMonth = this.refs.expMonth.value;
-        const expYear = this.refs.expYear.value;
+        const expMonth = mo;
+        const expYear = ye;
         const cardExpiration = `${expMonth}/${expYear}`;
-        const dateAndTime = new Date();
+        const t = new Date();
+        const dateAndTime = t.toString();
         const currentUser = this.props.currentUserQuery;
         // validation
         const shippingVeryfied = [shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip].every(x => x.trim());
@@ -173,7 +203,7 @@ class CheckOut extends Component {
                 //submit order
                 this.props.addOrderMutation({
                     variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
-                    // refetchQueries: [{ query }]
+                    refetchQueries: [{ query: currentUserQuery }]
                 }).then(order => {
                     const orderId = order.data.addOrder.id;
                     this.props.cart.forEach(item => {
@@ -193,19 +223,10 @@ class CheckOut extends Component {
                 return this.setState({ uploading: false });
             });
         } else { // if no user to create, simply place order
-            this.props.signUpMutation({
-                variables: { shippingEmail, password },
-                refetchQueries: [{ query: currentUserQuery }]
-            })
-            .catch(res => {
-                const errors = res.graphQLErrors.map(error => error.message);
-                errors.forEach(err => Materialize.toast(err, 4000));
-                return this.setState({ uploading: false });
-            });
             //submit order
             this.props.addOrderMutation({
                 variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
-                // refetchQueries: [{ query }]
+                refetchQueries: [{ query: currentUserQuery }]
             }).then(order => {
                 const orderId = order.data.addOrder.id;
                 this.props.cart.forEach(item => {
@@ -220,9 +241,26 @@ class CheckOut extends Component {
             })
         }
     }
+    toggleMonth() {
+        this.setState({ monthOrYearVisible: !this.state.monthOrYearVisible, monthVisible: !this.state.monthVisible })
+    }
+    toggleYear() {
+        this.setState({ monthOrYearVisible: !this.state.monthOrYearVisible, yearVisible: !this.state.monthVisible })
+    }
+    selectMonth(mo) {
+        this.setState({ mo });
+        this.hideMonthAndYear();
+    }
+    selectYear(ye) {
+        this.setState({ ye });
+        this.hideMonthAndYear();
+    }
+    hideMonthAndYear() {
+        this.setState({ monthOrYearVisible: false, monthVisible: false, yearVisible: false })
+    }
     render() {
         const { sameAsShipping, shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardCvv,
-        billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip } = this.state;
+        billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip, monthOrYearVisible, monthVisible, yearVisible } = this.state;
         return <section className="checkOut container">
             <h3 className="textWhite textCenter">Check Out</h3>
             <form onSubmit={this.onSubmit.bind(this)} className="checkOutForm">
@@ -262,45 +300,46 @@ class CheckOut extends Component {
                     <div className="input-field col s12">
                         <input value={cardNumber} onChange={e => this.setState({cardNumber: e.target.value})} placeholder='Card Number' />
                     </div>
-                     <div className="input-field col s12 m4">
-                        <select ref="expMonth" defaultValue="">
-                            <option value="" disabled>Month</option>
-                            <option value="1">1 January</option>
-                            <option value="2">2 February</option>
-                            <option value="3">3 March</option>
-                            <option value="4">4 April</option>
-                            <option value="5">5 May</option>
-                            <option value="6">6 June</option>
-                            <option value="7">7 July</option>
-                            <option value="8">8 August</option>
-                            <option value="9">9 September</option>
-                            <option value="0">10 October</option>
-                            <option value="11">11 November</option>
-                            <option value="12">12 December</option>
-                        </select>
-                        <label>Expiration</label>
+                </div>
+                <ul id="slide-out" className={`sideNav expSelectorList collection with-header ${monthVisible ? 'sideBarVisible' : ''}`}>
+                    <li className="collection-header textCenter"><h5>Expiration Month</h5></li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '1')}>1 - January</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '2')}>2 - February</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '3')}>3 - March</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '4')}>4 - April</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '5')}>5 - May</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '6')}>6 - June</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '7')}>7 - July</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '8')}>8 - August</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '9')}>9 - September</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '10')}>10 - October</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '11')}>11 - November</li>
+                    <li className="collection-item" onClick={this.selectMonth.bind(this, '12')}>12 - December</li>
+                </ul>
+                <ul id="slide-out" className={`sideNav expSelectorList collection with-header ${yearVisible ? 'sideBarVisible' : ''}`}>
+                    <li className="collection-header textCenter"><h5>Expiration Year</h5></li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2017')}>2017</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2018')}>2018</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2019')}>2019</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2020')}>2020</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2021')}>2021</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2022')}>2022</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2023')}>2023</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2024')}>2024</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2025')}>2025</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2026')}>2026</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2027')}>2027</li>
+                    <li className="collection-item" onClick={this.selectYear.bind(this, '2028')}>2028</li>
+                </ul>
+                <div className={monthOrYearVisible ? '' : 'displayNone'} id="sidenav-overlay" onClick={this.hideMonthAndYear.bind(this)}></div>
+                <label className="expirationLabel">Expiration</label>
+                <div className="expMonthAndYearSelector">
+                    <div className="expMonthAndYear">
+                        <span className="badge new blue darken-2" data-badge-caption="Month" onClick={this.toggleMonth.bind(this)}>{this.state.mo}</span>
+                        <span className="badge new blue darken-2" data-badge-caption="Year" onClick={this.toggleYear.bind(this)}>{this.state.ye}</span>
                     </div>
-                    <div className="input-field col s12 m4">
-                        <select ref="expYear" defaultValue="">
-                            <option value="" disabled>Year</option>
-                            <option value="2017">2017</option>
-                            <option value="2018">2018</option>
-                            <option value="2019">2019</option>
-                            <option value="2020">2020</option>
-                            <option value="2021">2021</option>
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                        </select>      
-                    </div>
-                    <div className="input-field col s12 m4">
-                        <input value={cardCvv} onChange={e => this.setState({cardCvv: e.target.value})} placeholder='cvv' />
+                    <div className="input-field cvvInput">
+                        <input value={this.state.cardCvv} onChange={e => this.setState({cardCvv: e.target.value})} placeholder='CVV' />
                     </div>
                 </div>
                 <h5>Billing Info</h5>
