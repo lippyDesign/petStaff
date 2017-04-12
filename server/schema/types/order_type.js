@@ -27,6 +27,7 @@ const OrderType = new GraphQLObjectType({
         cardExpiration: { type: GraphQLString},
         cardCvv: { type: GraphQLString },
         dateAndTime: { type: GraphQLString },
+        shippedOn: { type: GraphQLString },
         user: {
             type: require('./user_type'),
             resolve(parentValue) {

@@ -14,6 +14,7 @@ const OrderSchema = new Schema({
   cardExpiration: { type: String},
   cardCvv: { type: String },
   dateAndTime: { type: String },
+  shippedOn: { type: String },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'user'

@@ -53,44 +53,6 @@ const mutation = new GraphQLObjectType({
                 return (new Product({ title, description, assortment, price, priceSale, shipping, rating, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix })).save();
             }
         },
-        addOrder: {
-            type: OrderType,
-            args: {
-                shippingName: { type: GraphQLString },
-                shippingAddress: { type: GraphQLString },
-                shippingPhone: { type: GraphQLString },
-                shippingEmail: { type: GraphQLString },
-                billingName: { type: GraphQLString},
-                billingAddress: { type: GraphQLString},
-                billingPhone: { type: GraphQLString },
-                billingEmail: { type: GraphQLString },
-                cardNumber: { type: GraphQLString },
-                cardExpiration: { type: GraphQLString},
-                cardCvv: { type: GraphQLString },
-                dateAndTime: { type: GraphQLString }
-            },
-            resolve(parentValue, { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime }, req) {
-                const user = req.user ? req.user.id : null;
-                return Order.addOrder( shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, user);
-            }
-        },
-        addItemToOrder: {
-            type: OrderType,
-            args: {
-                orderId: { type: GraphQLID },
-                color: { type: GraphQLString },
-                size: { type: GraphQLString },
-                title: { type: GraphQLString },
-                price: { type: GraphQLString },
-                priceSale: { type: GraphQLString },
-                shipping: { type: GraphQLString },
-                quantity: { type: GraphQLInt },
-                productId: { type: GraphQLID },
-            },
-            resolve(parentValue, { orderId, color, size, title, price, priceSale, shipping, quantity, productId }) {
-                return Order.addItem(orderId, color, size, title, price, priceSale, shipping, quantity, productId);
-            }
-        },
         addPhotoToProduct: {
             type: ProductType,
             args: {
@@ -153,6 +115,56 @@ const mutation = new GraphQLObjectType({
             args: { id: { type: GraphQLID } },
             resolve(parentValue, { id }) {
                 return Product.deleteProduct(id);
+            }
+        },
+        addOrder: {
+            type: OrderType,
+            args: {
+                shippingName: { type: GraphQLString },
+                shippingAddress: { type: GraphQLString },
+                shippingPhone: { type: GraphQLString },
+                shippingEmail: { type: GraphQLString },
+                billingName: { type: GraphQLString},
+                billingAddress: { type: GraphQLString},
+                billingPhone: { type: GraphQLString },
+                billingEmail: { type: GraphQLString },
+                cardNumber: { type: GraphQLString },
+                cardExpiration: { type: GraphQLString},
+                cardCvv: { type: GraphQLString },
+                dateAndTime: { type: GraphQLString },
+                shippedOn: { type: GraphQLString }
+            },
+            resolve(parentValue, { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn }, req) {
+                const user = req.user ? req.user.id : null;
+                return Order.addOrder( shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn, user);
+            }
+        },
+        addItemToOrder: {
+            type: OrderType,
+            args: {
+                orderId: { type: GraphQLID },
+                color: { type: GraphQLString },
+                size: { type: GraphQLString },
+                title: { type: GraphQLString },
+                price: { type: GraphQLString },
+                priceSale: { type: GraphQLString },
+                shipping: { type: GraphQLString },
+                quantity: { type: GraphQLInt },
+                productId: { type: GraphQLID },
+            },
+            resolve(parentValue, { orderId, color, size, title, price, priceSale, shipping, quantity, productId }) {
+                return Order.addItem(orderId, color, size, title, price, priceSale, shipping, quantity, productId);
+            }
+        },
+        updateOrderShipped: {
+            type: OrderType,
+            args: {
+                id: { type: GraphQLID },
+                shippedOn: { type: GraphQLString }
+            },
+            resolve(parentValue, { id, shippedOn }) {
+                return Order.findById(id)
+                    .then(order => order.update({ shippedOn }))
             }
         },
         signup: {

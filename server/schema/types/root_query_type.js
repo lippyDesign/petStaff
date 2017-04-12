@@ -62,6 +62,12 @@ const RootQueryType = new GraphQLObjectType({
 				return Review.findById(id);
 			}
 		},
+		orders: {
+			type: new GraphQLList(OrderType),
+			resolve() {
+				return Order.find({});
+			}
+		},
 		order: {
 			type: OrderType,
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },

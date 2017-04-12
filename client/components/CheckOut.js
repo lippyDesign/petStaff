@@ -202,7 +202,7 @@ class CheckOut extends Component {
             .then(() => {
                 //submit order
                 this.props.addOrderMutation({
-                    variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
+                    variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn: '' },
                     refetchQueries: [{ query: currentUserQuery }]
                 }).then(order => {
                     const orderId = order.data.addOrder.id;
