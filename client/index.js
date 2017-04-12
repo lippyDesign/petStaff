@@ -24,6 +24,7 @@ import Contact from './components/Contact';
 import OrderPlaced from './components/OrderPlaced';
 import AdminOrders from './components/AdminOrders';
 import AdminOrderDetail from './components/AdminOrderDetail';
+import UserOrderDetail from './components/UserOrderDetail';
 
 import requireAuth from './components/requireAuth';
 
@@ -54,6 +55,7 @@ const Root = () => {
           <Route path="admin" component={Admin} />
           <Route path="adminorders" component={AdminOrders} />
           <Route path="adminorders/:id" component={AdminOrderDetail} />
+          <Route path="userorders/:id" component={requireAuth(UserOrderDetail)} />
           <Route path="addProduct" component={AddProduct} />
           <Route path="adminView" component={AdminProductList} />
           <Route path="checkout" component={CheckOut} />

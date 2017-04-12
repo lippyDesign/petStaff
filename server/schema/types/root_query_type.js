@@ -68,6 +68,12 @@ const RootQueryType = new GraphQLObjectType({
 				return Order.find({});
 			}
 		},
+		unshippedOrders: {
+			type: new GraphQLList(OrderType),
+			resolve() {
+				return Order.find({ shippedOn: null, shippedOn: '' });
+			}
+		},
 		order: {
 			type: OrderType,
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },

@@ -22,7 +22,10 @@ class AdminProductList extends Component {
         if (this.props.data.loading) return <div className="container">Loading</div>;
         if (!this.props.data.loading && this.props.data.products) {
             return <div className="container">
-                <ul className='collection'>{this.renderProducts()}</ul>
+                <ul className='collection with-header'>
+                    <li className="collection-header adminProductViewHeading"><h5>Products</h5></li>
+                    {this.renderProducts()}
+                </ul>
             </div>;
         }
         return <div />;

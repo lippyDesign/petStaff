@@ -37,6 +37,10 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+.marginLeftRightTwenty {
+    margin-left: 20px;
+    margin-right: 20px;
+}
 body {
     background-image: url("backgroundThree.jpg");
 }
@@ -240,6 +244,7 @@ input[type="file"] {
 .adminProductView {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .adminDeleteProductIcon {
     cursor: pointer;
@@ -469,7 +474,7 @@ input[type="file"] {
 .productDetailTop form {
     color: black;
 }
-.collection, .collection-item {
+.collection, .collection-item, .adminProductViewHeading {
     background-color: rgb(245, 250, 244) !important;
 }
 .checkOutForm {
@@ -526,4 +531,36 @@ input[type="file"] {
 }
 .expSelectorList li {
     cursor: pointer;
+}
+.smallProgress {
+    width: 160px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    top: 10px;
+}
+@media only screen and (max-width: 527px) {
+    .orderIdClass {
+        font-size: 12px;
+    }
+    .orderIdLabel {
+        display: none;
+    }
+}
+.adminOrderHeader {
+    display: flex;
+    justify-content: space-between;
+}
+@media only screen and (max-width: 440px) {
+    .adminOrderHeader {
+        flex-direction: column;
+    }
+    .orderIdLabel {
+        display: inline;
+    }
+}
+@media only screen and (max-width: 375px) {
+    .adminOrderListItem {
+        font-size: 12px;
+    }
 }

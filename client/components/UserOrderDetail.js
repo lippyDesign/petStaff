@@ -3,47 +3,16 @@ import { Link } from 'react-router';
 import { graphql } from 'react-apollo';
 
 import fetchOrderDetailsQuery from '../queries/fetchOrderDetails';
-import shipOrderMutation from '../mutations/ShipOrder';
-import fetchOrdersQuery from '../queries/fetchOrders';
-import fetchUnshippedQuery from '../queries/fetchUnshipped';
 
-class AdminOrderDetail extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { loading: false }
-    }
-    toggleShipped(id, shippedOn) {
-        this.setState({ loading: true})
-        let s = ''
-        if (!shippedOn) {
-            s = new Date().toString()
-        }
-        this.props.shipOrderMutation({
-            variables: { id, shippedOn: s },
-            refetchQueries: [{ query: fetchOrdersQuery }, { query: fetchUnshippedQuery }]
-        })
-        .then(() => {
-            this.setState({ loading: false})
-        })
-
-    }
+class UserOrderDetail extends Component {
     render() {
         if (this.props.fetchOrderDetailsQuery.loading) return <div/>
         const { billingAddress, billingEmail, billingName, billingPhone, cardCvv, cardExpiration, cardNumber, dateAndTime, id, orderItems, shippingAddress, shippingEmail, shippingName, shippingPhone, user, shippedOn } = this.props.fetchOrderDetailsQuery.order;
-        const spinnerOrSwitch = this.state.loading ? <div className="progress smallProgress"><div className="indeterminate"></div></div> : (<div className="switch">
-                <label>
-                    Not Shipped
-                    <input type="checkbox" onChange={this.toggleShipped.bind(this, id, shippedOn)} checked={shippedOn ? true : false} />
-                    <span className="lever"></span>
-                    Shipped
-                </label>
-            </div>)
         return <div className='paddingTopBottomFifty container'>
-            <Link to='adminorders' className="btn-floating btn-large waves-effect waves-light blue darken-2"><i className="material-icons">keyboard_arrow_left</i></Link>
+            <Link to='dashboard' className="btn-floating btn-large waves-effect waves-light blue darken-2"><i className="material-icons">keyboard_arrow_left</i></Link>
             <ul className='collection'>
-                <li className='collection-item adminOrderHeader'>
+                <li className='collection-item'>
                     <span className='orderIdClass'><span className="boldText orderIdLabel">Order ID:</span> {id}</span>
-                    {spinnerOrSwitch}
                 </li>
                 <li className="collection-item">
                     <h5>Shipping Info</h5>
@@ -59,9 +28,9 @@ class AdminOrderDetail extends Component {
                 </li>
                 <li className="collection-item">
                     <h5>Other Info</h5>
-                    <span  className="boldText">ordered on:</span> {dateAndTime}<br />
+                    <span  className="boldText">ordered on:</span> {dateAndTime.slice(4, 15)}<br />
                     <span  className="boldText">ordered by:</span><br />{user ? user.email: 'not a user'}<br />{user ? user.id : ''}<br />
-                    <span  className="boldText">shipped on:</span> {shippedOn || 'not shipped yet'}<br />
+                    <span  className="boldText">shipped on:</span> {shippedOn.slice(4, 15) || 'not shipped yet'}<br />
                 </li>
                 <li className="collection-item">
                     <h5>Items</h5>
@@ -89,4 +58,4 @@ class AdminOrderDetail extends Component {
     }
 }
 
-export default graphql(shipOrderMutation, { name: 'shipOrderMutation' })(graphql(fetchOrderDetailsQuery, { name: 'fetchOrderDetailsQuery', options: props => { return { variables: { id: props.params.id } } } })(AdminOrderDetail));
+export default graphql(fetchOrderDetailsQuery, { name: 'fetchOrderDetailsQuery', options: props => { return { variables: { id: props.params.id } } } })(UserOrderDetail);

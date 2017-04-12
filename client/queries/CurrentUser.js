@@ -27,6 +27,7 @@ export default gql`
             orders {
                 id
                 dateAndTime
+                shippedOn
                 orderItems {
                     id
                     title
