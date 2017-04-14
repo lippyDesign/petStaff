@@ -60,4 +60,105 @@ const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js');
 app.use(webpackMiddleware(webpack(webpackConfig)));
 
+//////////////////////////////// EMAIL ///////////////////////////////////
+
+var nodemailer = require('nodemailer');
+ 
+// create reusable transporter object using SMTP transport 
+var transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: 'vololipu@gmail.com',
+        pass: 'Number1fan!'
+    }
+});
+
+function sendEmailPlease(res) {
+    // send mail with defined transport object 
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error);
+        }else{
+            console.log('Message sent: ' + info.response);
+            res.send('sent')
+        }
+    });
+}
+
+var bodyParser = require('body-parser')
+// parse application/json
+app.use(bodyParser.json())
+
+// if someone contacts us
+app.post('/contactus', function (req, res) {
+    const { email, message } = req.body;
+    const date = new Date().toString();
+    mailOptions = {
+        from: `<${email}>`,
+        to: 'vololipu@gmail.com',
+        subject: 'message about PET CLOTHES',
+        text: 'Hello world',
+        html: `
+            <p><b>From:</b> ${email}</p>
+            <p><b>Message:</b> ${message}</p>
+            <p><b>Date:</b> ${date}</p>`
+    }
+    sendEmailPlease(res);
+});
+
+// purchase confirmation email
+app.post('/contfirmationemail', function (req, res) {
+    const { orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, dateAndTime, cart } = req.body;
+    let c = '';
+    let itemsCost = 0;
+    let shippingCost = 0
+    cart.forEach(item => {
+        const cost = item.priceSale || item.price;
+        const shipp = item.shipping || '0';
+        itemsCost = itemsCost + Number(cost);
+        shippingCost = shippingCost + Number(shipp);
+        return c = c + `
+            <p><b>${item.quantity}</b> x <b>${item.title}</b></p>
+            <p>regular price: $${item.price}</p>
+            <p>sale price: ${item.priceSale ? `$${item.priceSale}` : 'not on sale'}</p>
+            <p>shipping cost: ${item.shipping ? `$${item.shipping}` : 'free shipping'}</p>
+            <p>size: ${item.size}</p>
+            <p>color: ${item.color}</p>
+            <p> </p>
+        `;
+    })
+    mailOptions = {
+        from: `The Pet Team <vololipu@gmail.com>`,
+        to: shippingEmail,
+        subject: 'Thank You for your Pet Hru order',
+        text: 'Thank You for your Pet Hru order',
+        html: `
+            <h3>Thank You For Your Order:</h3>
+            <p><b>Order ID #:</b>${orderId}</p>
+            <h3>Shipping Info:</h3>
+            <p>${shippingName}</p>
+            <p>${shippingEmail}</p>
+            <p>${shippingPhone}</p>
+            <p>${shippingAddress}</p>
+            <h3>Payment Info:</h3>
+            <p><b>Card #:</b> **** **** **** ${cardNumber}</p>
+            <h3>Billing Info:</h3>
+            <p>${billingName}</p>
+            <p>${billingEmail}</p>
+            <p>${billingPhone}</p>
+            <p>${billingAddress}</p>
+            <h3>Items:</h3>
+            ${c}
+            <p><b>Date and Time:</b> ${dateAndTime}</p>
+            <p><b>Cost of items:</b> $${itemsCost.toFixed(2)}</p>
+            <p><b>Cost of shipping:</b> $${shippingCost.toFixed(2)}</p>
+            <p><b>Total:</b> $${(itemsCost + shippingCost).toFixed(2)}</p>
+            <p>Please contact us for <a href="https://www.google.com">more information</a></p>`
+
+    }
+    sendEmailPlease(res);
+});
+
+//////////////////////////////// END EMAIL ///////////////////////////////////
+
 module.exports = app;

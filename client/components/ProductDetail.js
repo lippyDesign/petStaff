@@ -34,13 +34,8 @@ class ProductDetail extends Component {
         const { photos, priceSale, price, reviews, sizes, colors, title, description, id, shipping } = this.props.data.product;
         return <div>
             <section className="productDetail container">
-                <div className="row productDetailTop">
-                    <div className="col s12 l2 backButtonContainer">
-                        <Link to='/products' className="backButton left"><i className="material-icons backArrow">keyboard_arrow_left</i> Products</Link>
-                    </div>
-                    <div className="col s12 l8">
-                        <SearchForm />
-                    </div>
+                <div className="row">
+                    <Link to='/products' className="backButton left"><i className="material-icons backArrow">keyboard_arrow_left</i> Products</Link>
                 </div>
                 <div className="row">
                     <div className="col s12 l8">

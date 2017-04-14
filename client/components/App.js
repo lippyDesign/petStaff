@@ -7,7 +7,7 @@ import Footer from './Footer';
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { cart: [] }
+        this.state = { cart: [], searchText: '' }
     }
     componentWillMount() {
         const config = {
@@ -84,6 +84,9 @@ class App extends Component {
     emptyCart() {
         this.setState({ cart: [] })
     }
+    updateSearchText(searchText) {
+        this.setState({ searchText });
+    }
     render() {
         return <div className="site">
             <Header cartTotalItems={this.countCartItems()}/>
@@ -91,10 +94,12 @@ class App extends Component {
                 {React.cloneElement(this.props.children,
                     {
                         cart: this.state.cart,
+                        searchText: this.state.searchText,
                         addToCart: this.addToCart.bind(this),
                         increaseByOne: this.increaseByOne.bind(this),
                         decreaseByOne: this.decreaseByOne.bind(this),
                         removeFromCart: this.removeFromCart.bind(this),
+                        updateSearchText: this.updateSearchText.bind(this),
                         emptyCart: this.emptyCart.bind(this),
                         allItemsCost: this.getAllItemsCost(),
                         allShippingCost: this.getAllShippingCost(),

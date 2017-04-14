@@ -8,7 +8,7 @@ import query from '../queries/fetchProducts';
 
 class Products extends Component {
     renderSearchBox() {
-        return <SearchForm />
+        return <SearchForm searchText={this.props.searchText} updateSearchText={this.props.updateSearchText} />
     }
     renderProducts() {
         return this.props.data.products.map(({ title, photos, price, priceSale, colors, sizes, reviews, id, shipping }) => {

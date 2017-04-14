@@ -24,9 +24,10 @@ const OrderSchema = new Schema({
     ref: 'orderItem'
   }]
 });
-OrderSchema.statics.addOrder = function(shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, user) {
+OrderSchema.statics.addOrder = function(shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn, user) {
   const Order = mongoose.model('order');
-  return new Order({ shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, user }).save()
+  console.log(shippedOn)
+  return new Order({ shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn, user }).save()
     .then(order => {
       if (user) {
         const User = mongoose.model('user');

@@ -38,15 +38,13 @@ class CheckOut extends Component {
             password: '',
             monthOrYearVisible: false,
             monthVisible: false,
-            yearVisible: false,
-            mo: '',
-            ye: ''
+            yearVisible: ''
         }
     }
     componentDidMount() {
         // if no items in cart, send user to products page
         if (!this.props.cart.length) return hashHistory.push('products');
-        // populate form if user is signed in
+        // populate form
         if (this.props.currentUserQuery.user) {
             let { shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip, cardNumber, cardExpiration, cvv,
             billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip} = this.props.currentUserQuery.user;
@@ -76,8 +74,8 @@ class CheckOut extends Component {
                 billingCity: billingCity || '',
                 billingState: billingState || '',
                 billingZip: billingZip || '',
-                ye: ye || '',
-                mo: mo || ''
+                ye,
+                mo
             })
         }
     }
@@ -142,13 +140,15 @@ class CheckOut extends Component {
         const shippingAddress = `${shippingStreet}, ${shippingCity}, ${shippingState}, ${shippingZip}`;
         const billingName = sameAsShipping ? shippingName : `${billingFirst} ${billingLast}`;
         const billingAddress = sameAsShipping ? shippingAddress : `${billingStreet}, ${billingCity}, ${billingState}, ${billingZip}`;
-        const cardExpiration = `${mo}/${ye}`;
+        const expMonth = mo;
+        const expYear = ye;
+        const cardExpiration = `${expMonth}/${expYear}`;
         const t = new Date();
         const dateAndTime = t.toString();
         const currentUser = this.props.currentUserQuery;
         // validation
         const shippingVeryfied = [shippingFirst, shippingLast, shippingEmail, shippingPhone, shippingStreet, shippingCity, shippingState, shippingZip].every(x => x.trim());
-        const cardVeryfied = [cardNumber, cardCvv, mo, ye].every(x => x.trim());
+        const cardVeryfied = [cardNumber, cardCvv, expMonth, expYear].every(x => x.trim());
         let billingVeryfied = true;
         if (!sameAsShipping) {
             billingVeryfied = [billingFirst, billingLast, billingEmail, billingPhone, billingStreet, billingCity, billingState, billingZip].every(x => x.trim());
@@ -174,7 +174,6 @@ class CheckOut extends Component {
             const bc = sameAsShipping ? shippingCity : billingCity;
             const bst = sameAsShipping ? shippingState : billingState;
             const bz = sameAsShipping ? shippingZip : billingZip;
-            console.log('starting')
             this.props.signUpMutation({
                 variables: {
                     email: shippingEmail,
@@ -208,53 +207,15 @@ class CheckOut extends Component {
                     refetchQueries: [{ query: currentUserQuery }]
                 }).then(order => {
                     const orderId = order.data.addOrder.id;
-                    this.props.cart.forEach((item, index) => {
+                    this.props.cart.forEach(item => {
                         const { color, size, title, price, priceSale, shipping, quantity } = item;
                         return this.props.addItemToOrderMutation({
                             variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
                         }).then(order => {
-                            if (this.props.cart.length === index + 1) {
-                                //send order confirmation email
-                                axios.post('/contfirmationemail', {
-                                    email: shippingEmail, message: 'order placed'
-                                })
-                                .then(response => {
-                                    this.props.emptyCart();
-                                    hashHistory.push('orderplaced');
-                                })
-                                .catch(error => {
-                                    console.log(error);
-                                    this.setState({ uploading: false });
-                                    Materialize.toast('There was an error sending confirmation email', 4000);
-                                });
-                            }
-                        })
-                    })
-                })
-                .catch(e => console.log(e))
-            })
-            .catch(res => {
-                const errors = res.graphQLErrors.map(error => error.message);
-                errors.forEach(err => Materialize.toast(err, 4000));
-                return this.setState({ uploading: false });
-            });
-        } else { // if no user to create, simply place order
-            //submit order
-            this.props.addOrderMutation({
-                variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn: '' },
-                refetchQueries: [{ query: currentUserQuery }]
-            }).then(order => {
-                const orderId = order.data.addOrder.id;
-                this.props.cart.forEach((item, index) => {
-                    const { color, size, title, price, priceSale, shipping, quantity } = item;
-                    return this.props.addItemToOrderMutation({
-                        variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
-                    }).then(order => {
-                        if (this.props.cart.length === index + 1) {
+
                             //send order confirmation email
-                            const lastFour = cardNumber.substr(cardNumber.length - 4);
                             axios.post('/contfirmationemail', {
-                                orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber: lastFour, dateAndTime, cart: this.props.cart
+                                email: shippingEmail, message: 'order placed'
                             })
                             .then(response => {
                                 this.props.emptyCart();
@@ -265,7 +226,44 @@ class CheckOut extends Component {
                                 this.setState({ uploading: false });
                                 Materialize.toast('There was an error sending confirmation email', 4000);
                             });
-                        }
+
+
+                        })
+                    })
+                })
+            })
+            .catch(res => {
+                const errors = res.graphQLErrors.map(error => error.message);
+                errors.forEach(err => Materialize.toast(err, 4000));
+                return this.setState({ uploading: false });
+            });
+        } else { // if no user to create, simply place order
+            //submit order
+            this.props.addOrderMutation({
+                variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime },
+                refetchQueries: [{ query: currentUserQuery }]
+            }).then(order => {
+                const orderId = order.data.addOrder.id;
+                this.props.cart.forEach(item => {
+                    const { color, size, title, price, priceSale, shipping, quantity } = item;
+                    return this.props.addItemToOrderMutation({
+                        variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
+                    }).then(order => {
+                        
+                        //send order confirmation email
+                        axios.post('/contfirmationemail', {
+                            email: shippingEmail, message: 'order placed'
+                        })
+                        .then(response => {
+                            this.props.emptyCart();
+                            hashHistory.push('orderplaced');
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.setState({ uploading: false });
+                            Materialize.toast('There was an error sending confirmation email', 4000);
+                        });
+
                     })
                 })
             })

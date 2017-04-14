@@ -11,7 +11,7 @@ class UserOrderHistory extends Component {
                 <span>
                     {items}
                     <span className="boldText">ordered on: </span>{d}
-                    <span className="boldText"><br />shipped on: </span>{shippedOn.slice(4, 15) || 'not shipped yet'}
+                    <span className="boldText"><br />shipped on: </span>{shippedOn ? shippedOn.slice(4, 15) : 'not shipped yet'}
                 </span>
                 <Link to={`/userorders/${id}`}><i className="material-icons">more_vert</i></Link>
             </li>;

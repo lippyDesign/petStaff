@@ -117,6 +117,16 @@ const mutation = new GraphQLObjectType({
                 return Product.deleteProduct(id);
             }
         },
+        updateSearchText: {
+            type: new GraphQLList(ProductType),
+            args: {
+                searchText: { type: GraphQLString }
+            },
+            resolve(parentValue, { searchText }) {
+                return Product.find({ title: { "$regex": searchText, "$options": "i" } })
+                    .then(products => products)
+            }
+        },
         addOrder: {
             type: OrderType,
             args: {
