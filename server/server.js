@@ -79,7 +79,6 @@ function sendEmailPlease(res) {
         if(error){
             console.log(error);
         }else{
-            console.log('Message sent: ' + info.response);
             res.send('sent')
         }
     });
@@ -115,16 +114,15 @@ app.post('/contfirmationemail', function (req, res) {
     cart.forEach(item => {
         const cost = item.priceSale || item.price;
         const shipp = item.shipping || '0';
-        itemsCost = itemsCost + Number(cost);
-        shippingCost = shippingCost + Number(shipp);
+        itemsCost = itemsCost + (Number(cost) * item.quantity);
+        shippingCost = shippingCost + (Number(shipp) * item.quantity);
         return c = c + `
             <p><b>${item.quantity}</b> x <b>${item.title}</b></p>
             <p>regular price: $${item.price}</p>
             <p>sale price: ${item.priceSale ? `$${item.priceSale}` : 'not on sale'}</p>
             <p>shipping cost: ${item.shipping ? `$${item.shipping}` : 'free shipping'}</p>
-            <p>size: ${item.size}</p>
+            <p>size: ${item.size === 'oneSizeFitsAll' ? 'One Size Fits All' : item.size.toUpperCase()}</p>
             <p>color: ${item.color}</p>
-            <p> </p>
         `;
     })
     mailOptions = {
@@ -134,7 +132,7 @@ app.post('/contfirmationemail', function (req, res) {
         text: 'Thank You for your Pet Hru order',
         html: `
             <h3>Thank You For Your Order:</h3>
-            <p><b>Order ID #:</b>${orderId}</p>
+            <p><b>Order ID: </b>${orderId}</p>
             <h3>Shipping Info:</h3>
             <p>${shippingName}</p>
             <p>${shippingEmail}</p>
@@ -149,10 +147,12 @@ app.post('/contfirmationemail', function (req, res) {
             <p>${billingAddress}</p>
             <h3>Items:</h3>
             ${c}
+            <h3>Other Info:</h3>
             <p><b>Date and Time:</b> ${dateAndTime}</p>
             <p><b>Cost of items:</b> $${itemsCost.toFixed(2)}</p>
             <p><b>Cost of shipping:</b> $${shippingCost.toFixed(2)}</p>
             <p><b>Total:</b> $${(itemsCost + shippingCost).toFixed(2)}</p>
+            <h3>If you have any quetions:</h3>
             <p>Please contact us for <a href="https://www.google.com">more information</a></p>`
 
     }
@@ -160,5 +160,24 @@ app.post('/contfirmationemail', function (req, res) {
 });
 
 //////////////////////////////// END EMAIL ///////////////////////////////////
+//////////////////////////////// START STRIPE PAYMENT ///////////////////////////////////
+const stripe = require("stripe")("sk_test_BQokikJOvBiI2HlWgH4olfQ2");
+
+app.post('/charge', function(req, res) {
+    stripe.charges.create({
+        amount: 2000,
+        currency: "usd",
+        source: "tok_189gAD2eZvKYlo2CQjyFRmV1", // obtained with Stripe.js
+        description: "Charge for matthew.martinez@example.com"
+    }, function(err, charge) {
+        // asynchronously called
+        if (err) {
+            console.log('ERRORR :(')
+            console.log(err)
+        }
+    });
+    console.log('payment successful')
+});
+//////////////////////////////// END STRIPE PAYMENT ///////////////////////////////////
 
 module.exports = app;

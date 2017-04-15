@@ -174,7 +174,6 @@ class CheckOut extends Component {
             const bc = sameAsShipping ? shippingCity : billingCity;
             const bst = sameAsShipping ? shippingState : billingState;
             const bz = sameAsShipping ? shippingZip : billingZip;
-            console.log('starting')
             this.props.signUpMutation({
                 variables: {
                     email: shippingEmail,
@@ -215,8 +214,9 @@ class CheckOut extends Component {
                         }).then(order => {
                             if (this.props.cart.length === index + 1) {
                                 //send order confirmation email
+                                const lastFour = cardNumber.substr(cardNumber.length - 4);
                                 axios.post('/contfirmationemail', {
-                                    email: shippingEmail, message: 'order placed'
+                                    orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber: lastFour, dateAndTime, cart: this.props.cart
                                 })
                                 .then(response => {
                                     this.props.emptyCart();
