@@ -25,6 +25,9 @@ import OrderPlaced from './components/OrderPlaced';
 import AdminOrders from './components/AdminOrders';
 import AdminOrderDetail from './components/AdminOrderDetail';
 import UserOrderDetail from './components/UserOrderDetail';
+import About from './components/About';
+import Policy from './components/Policy';
+import ShippingAndReturns from './components/ShippingAndReturns';
 
 import requireAuth from './components/requireAuth';
 
@@ -61,6 +64,9 @@ const Root = () => {
           <Route path="checkout" component={CheckOut} />
           <Route path="contact" component={Contact} />
           <Route path="orderplaced" component={OrderPlaced} />
+          <Route path="about" component={About} />
+          <Route path="policy" component={Policy} />
+          <Route path="shippingandreturns" component={ShippingAndReturns} />
         </Route>
       </Router>
     </ApolloProvider>

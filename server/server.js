@@ -106,7 +106,7 @@ app.post('/contactus', function (req, res) {
 });
 
 // purchase confirmation email
-app.post('/contfirmationemail', function (req, res) {
+app.post('/confirmationemail', function (req, res) {
     const { orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, dateAndTime, cart } = req.body;
     let c = '';
     let itemsCost = 0;
@@ -161,22 +161,22 @@ app.post('/contfirmationemail', function (req, res) {
 
 //////////////////////////////// END EMAIL ///////////////////////////////////
 //////////////////////////////// START STRIPE PAYMENT ///////////////////////////////////
-const stripe = require("stripe")("sk_test_BQokikJOvBiI2HlWgH4olfQ2");
+const stripe = require("stripe")("sk_test_DlWgPlaIzi7tEyeyMWFyitIx");
 
-app.post('/charge', function(req, res) {
+app.post('/charge', function(req, res, next) {
+    const amount = req.body.price.toString().split('.').join('');
     stripe.charges.create({
-        amount: 2000,
+        amount,
         currency: "usd",
-        source: "tok_189gAD2eZvKYlo2CQjyFRmV1", // obtained with Stripe.js
-        description: "Charge for matthew.martinez@example.com"
+        source: req.body.stripeToken, // obtained with Stripe.js
+        description: "test charge"
     }, function(err, charge) {
         // asynchronously called
         if (err) {
-            console.log('ERRORR :(')
-            console.log(err)
+            return res.send('There was an error charging your card')
         }
     });
-    console.log('payment successful')
+    return res.send('Payment Successful')
 });
 //////////////////////////////// END STRIPE PAYMENT ///////////////////////////////////
 
