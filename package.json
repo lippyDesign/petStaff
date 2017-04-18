@@ -4,7 +4,10 @@
   "description": "Web App for purchasing clothes for your pets",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js --ignore client"
+    "clean": "rimraf dist",
+    "dev": "nodemon index.js --ignore client",
+    "build": "npm run clean && NODE_ENV=production webpack -p",
+    "serve": "webpack-dev-server"
   },
   "author": "",
   "license": "ISC",
@@ -50,6 +53,8 @@
     "babel-preset-env": "^1.2.2",
     "image-webpack-loader": "^3.3.0",
     "nodemon": "^1.11.0",
-    "url-loader": "^0.5.8"
+    "url-loader": "^0.5.8",
+    "webpack-dev-middleware": "^1.10.1",
+    "webpack-dev-server": "^2.4.2"
   }
 }

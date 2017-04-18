@@ -4,7 +4,7 @@ import ApolloClient, { createNetworkInterface } from 'apollo-client';
 import { ApolloProvider } from 'react-apollo';
 import  { Router, hashHistory, Route, IndexRoute } from 'react-router';
 
-import './style/style.css';
+import '../style/style.css';
 import "react-image-gallery/styles/css/image-gallery.css";
 
 import App from './components/App';

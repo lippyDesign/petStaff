@@ -7,6 +7,7 @@ const passport = require('passport');
 const passportConfig = require('./services/auth');
 const MongoStore = require('connect-mongo')(session);
 const schema = require('./schema/schema');
+const path = require('path');
 
 // Create a new Express application
 const app = express();
@@ -51,14 +52,6 @@ app.use('/graphql', expressGraphQL({
   schema,
   graphiql: true
 }));
-
-// Webpack runs as a middleware.  If any request comes in for the root route ('/')
-// Webpack will respond with the output of the webpack process: an HTML file and
-// a single bundle.js output of all of our client side Javascript
-const webpackMiddleware = require('webpack-dev-middleware');
-const webpack = require('webpack');
-const webpackConfig = require('../webpack.config.js');
-app.use(webpackMiddleware(webpack(webpackConfig)));
 
 //////////////////////////////// EMAIL ///////////////////////////////////
 
@@ -179,5 +172,23 @@ app.post('/charge', function(req, res, next) {
     return res.send('Payment Successful')
 });
 //////////////////////////////// END STRIPE PAYMENT ///////////////////////////////////
+
+// Webpack runs as a middleware.  If any request comes in for the root route ('/')
+// Webpack will respond with the output of the webpack process: an HTML file and
+// a single bundle.js output of all of our client side Javascript
+
+// use webback middleware only in development
+// this has to be bellow all other server routes
+if (process.env.NODE_ENV !== 'production') {
+    const webpackMiddleware = require('webpack-dev-middleware');
+    const webpack = require('webpack');
+    const webpackConfig = require('../webpack.config.js');
+    app.use(webpackMiddleware(webpack(webpackConfig)));
+} else {
+    app.use(express.static('dist'));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist/index.html'));
+    })
+}
 
 module.exports = app;
