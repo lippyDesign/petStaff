@@ -5,6 +5,7 @@ import { graphql } from 'react-apollo';
 import axios from 'axios';
 
 import signUpMutation from '../mutations/Signup';
+import signInMutation from '../mutations/Login';
 import addOrderMutation from '../mutations/AddOrder';
 import addItemToOrderMutation from '../mutations/AddItemToOrder';
 import currentUserQuery from '../queries/CurrentUser';
@@ -100,10 +101,11 @@ class CheckOut extends Component {
         if (!currentUser.user && !this.state.createAccount) {
             return <div className="textCenter row">
                 <h5>Account Info</h5>
+                <p className="textCenter">Check the checkbox if you'd like to sign up or sign in</p>
                 <div>
                     <span>
                         <input type="checkbox" id="createAccount" onChange={() => this.setState({ createAccount: !this.state.createAccount })} checked={this.state.createAccount} />
-                        <label htmlFor="createAccount">Create Account</label>
+                        <label htmlFor="createAccount">Sign Up / Sign In</label>
                     </span>
                 </div>
             </div>;
@@ -111,10 +113,11 @@ class CheckOut extends Component {
         if (!currentUser.user) {
             return <div className="row">
                 <h5 className="textCenter">Account Info</h5>
+                <p className="textCenter">Uncheck the checkbox if you'd like to check out as guest</p>
                 <div className="textCenter">
                     <span>
                         <input type="checkbox" id="createAccount" onChange={() => this.setState({ createAccount: !this.state.createAccount })} checked={this.state.createAccount} />
-                        <label htmlFor="createAccount">Create Account</label>
+                        <label htmlFor="createAccount">Sign Up / Sign In</label>
                     </span>
                 </div>
                 <div className="input-field col s12 m4 offset-m4">
@@ -177,17 +180,11 @@ class CheckOut extends Component {
                 this.setState({ uploading: false });
                 return Materialize.toast(response.error.message, 4000);
             } else {
-                return axios.post('/charge', {
-                    stripeToken: response.id, price: this.props.totalCost.toFixed(2)
-                }).then(r => {
-                    if (r.data !== 'Payment Successful') return Materialize.toast('There was an error with charging the card', 4000);
-                    // once card had been charged, we can place the order
-                    placeOrder();
-                }).catch(e => console.log(e))
+                placeOrder(response);
             }
         })
 
-        const placeOrder = () => {
+        const placeOrder = (cardResponse) => {
             // create user if necessary and then place order
             if (!currentUser.user && this.state.createAccount) {
                 const bf = sameAsShipping ? shippingFirst : billingFirst ;
@@ -242,9 +239,16 @@ class CheckOut extends Component {
                                     axios.post('/confirmationemail', {
                                         orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber: lastFour, dateAndTime, cart: this.props.cart
                                     })
-                                    .then(response => {
-                                        this.props.emptyCart();
-                                        hashHistory.push('orderplaced');
+                                    .then(() => {
+                                        // charge card
+                                        return axios.post('/charge', {
+                                            stripeToken: cardResponse.id, price: this.props.totalCost.toFixed(2)
+                                        }).then(r => {
+                                            if (r.data !== 'Payment Successful') return Materialize.toast('There was an error with charging the card', 4000);
+                                            this.props.emptyCart();
+                                            hashHistory.push('orderplaced');
+                                        })
+                                        .catch(e => console.log(e))
                                     })
                                     .catch(error => {
                                         console.log(error);
@@ -259,8 +263,62 @@ class CheckOut extends Component {
                 })
                 .catch(res => {
                     const errors = res.graphQLErrors.map(error => error.message);
-                    errors.forEach(err => Materialize.toast(err, 4000));
-                    return this.setState({ uploading: false });
+                    // if email is already in use, we'll attempt to sign user in with the credentials they provided
+                    if (errors.length === 1 && errors[0] === 'Email in use') {
+                        this.props.signInMutation({
+                            variables: { email: shippingEmail, password },
+                            refetchQueries: [{ query: currentUserQuery }]
+                        })
+                        .then(() => {
+                            // submit order after signing in
+                            this.props.addOrderMutation({
+                                variables: { shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber, cardExpiration, cardCvv, dateAndTime, shippedOn: '' },
+                                refetchQueries: [{ query: currentUserQuery }]
+                            })
+                            .then(order => {
+                                const orderId = order.data.addOrder.id;
+                                this.props.cart.forEach((item, index) => {
+                                    const { color, size, title, price, priceSale, shipping, quantity } = item;
+                                    return this.props.addItemToOrderMutation({
+                                        variables: { orderId, color, size, title, price, priceSale, shipping, quantity, productId: item.id }
+                                    }).then(order => {
+                                        if (this.props.cart.length === index + 1) {
+                                            //send order confirmation email
+                                            const lastFour = cardNumber.substr(cardNumber.length - 4);
+                                            axios.post('/confirmationemail', {
+                                                orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber: lastFour, dateAndTime, cart: this.props.cart
+                                            })
+                                            .then(() => {
+                                                // charge card
+                                                return axios.post('/charge', {
+                                                    stripeToken: cardResponse.id, price: this.props.totalCost.toFixed(2)
+                                                }).then(r => {
+                                                    if (r.data !== 'Payment Successful') return Materialize.toast('There was an error with charging the card', 4000);
+                                                    this.props.emptyCart();
+                                                    hashHistory.push('orderplaced');
+                                                })
+                                                .catch(e => console.log(e))
+                                            })
+                                            .catch(error => {
+                                                console.log(error);
+                                                this.setState({ uploading: false });
+                                                Materialize.toast('There was an error sending confirmation email', 4000);
+                                            });
+                                        }
+                                    })
+                                })
+                            })
+                        })
+                        .catch(res => {
+                            const errors = res.graphQLErrors.map(error => error.message);
+                            errors.forEach(err => Materialize.toast(err, 4000));
+                            return this.setState({ uploading: false });
+                        })
+                    } else {
+                        // if error is not Email in use, stop everything, display error message
+                        errors.forEach(err => Materialize.toast(err, 4000));
+                        return this.setState({ uploading: false });
+                    }
                 });
             } else { // if no user to create, simply place order
                 //submit order
@@ -280,9 +338,16 @@ class CheckOut extends Component {
                                 axios.post('/confirmationemail', {
                                     orderId, shippingName, shippingAddress, shippingPhone, shippingEmail, billingName, billingAddress, billingPhone, billingEmail, cardNumber: lastFour, dateAndTime, cart: this.props.cart
                                 })
-                                .then(response => {
-                                    this.props.emptyCart();
-                                    hashHistory.push('orderplaced');
+                                .then(() => {
+                                    // charge card
+                                    return axios.post('/charge', {
+                                        stripeToken: cardResponse.id, price: this.props.totalCost.toFixed(2)
+                                    }).then(r => {
+                                        if (r.data !== 'Payment Successful') return Materialize.toast('There was an error with charging the card', 4000);
+                                        this.props.emptyCart();
+                                        hashHistory.push('orderplaced');
+                                    })
+                                    .catch(e => console.log(e))
                                 })
                                 .catch(error => {
                                     console.log(error);
@@ -453,4 +518,4 @@ class CheckOut extends Component {
     }
 }
 
-export default graphql(signUpMutation, { name: 'signUpMutation' })(graphql(currentUserQuery, { name: 'currentUserQuery' })(graphql(addOrderMutation, {name: 'addOrderMutation'})(graphql(addItemToOrderMutation, {name : 'addItemToOrderMutation'})(CheckOut))));
+export default graphql(signInMutation, { name: 'signInMutation' })(graphql(signUpMutation, { name: 'signUpMutation' })(graphql(currentUserQuery, { name: 'currentUserQuery' })(graphql(addOrderMutation, {name: 'addOrderMutation'})(graphql(addItemToOrderMutation, {name : 'addItemToOrderMutation'})(CheckOut)))));
