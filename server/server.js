@@ -12,6 +12,8 @@ const path = require('path');
 // Create a new Express application
 const app = express();
 
+const mLab = require('./mLab');
+console.log(mLab)
 // Replace with your mongoLab URI
 const MONGO_URI = 'mongodb://petstaff:123456@ds045644.mlab.com:45644/petstaff';
 

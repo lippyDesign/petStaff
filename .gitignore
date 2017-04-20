@@ -1,4 +1,6 @@
 node_modules
+mLab.js
+passwords.js
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
