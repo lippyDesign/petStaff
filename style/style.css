@@ -206,7 +206,7 @@ i.backArrow {
     position: relative;
 }
 .imgSelect {
-    width: 120px;
+    width: 150px;
     height: 120px;
 }
 input[type="file"] {
@@ -216,7 +216,7 @@ input[type="file"] {
     border: 1px solid #ccc;
     display: inline-block;
     padding: 6px 0;
-    width: 120px;
+    width: 150px;
     cursor: pointer;
     text-align: center;
 }
@@ -297,7 +297,10 @@ input[type="file"] {
     border-radius: 2px;
 }
 .colorSelectorList li {
-    width: 60px;
+    padding-left: 3px;
+    padding-right: 3px;
+    width: auto;
+    min-width: 60px;
 }
 .checkoutButtonWrapper {
     /*position: absolute;*/
@@ -441,6 +444,9 @@ input[type="file"] {
     padding: 10px;
     background: rgb(245, 250, 244);
     border-radius: 4px;
+}
+.cartCheckoutSectionSmall {
+    flex-direction: column;
 }
 .cart {
     padding-bottom: 50px;

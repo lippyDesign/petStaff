@@ -13,7 +13,7 @@ class AdminProductList extends Component {
     renderProducts() {
         return this.props.data.products.map(({ title, id }) => {
             return <li key={id} className='collection-item adminProductView'>
-                <Link to={`products/${id}`}>{title}</Link>
+                <Link to={`productsedit/${id}`}>{title}</Link>
                 <i onClick={() => this.onProductDelete(id)} className='material-icons adminDeleteProductIcon'>delete</i>
             </li>
         });

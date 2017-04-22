@@ -80,7 +80,7 @@ class Cart extends Component {
             <div className="hide-on-med-and-up">
                 {this.renderSmallGuestCart()}
             </div>
-            <div className="cartCheckoutSection hide-on-med-and-up">
+            <div className="cartCheckoutSection cartCheckoutSectionSmall hide-on-med-and-up">
                 <h4 className="title">${this.props.allItemsCost.toFixed(2)}</h4>
                 <button className="waves-effect waves-light btn" onClick={() => hashHistory.push('checkout')}>Proceed To Checkout</button>
             </div>

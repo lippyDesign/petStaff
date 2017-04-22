@@ -1,6 +1,7 @@
 node_modules
 mLab.js
-passwords.js
+emailConfig.js
+firebaseConfig.js
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

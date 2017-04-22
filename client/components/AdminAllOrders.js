@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 import { hashHistory, Link } from 'react-router';
 import { graphql } from 'react-apollo';
+import firebase from 'firebase';
 
 import fetchOrdersQuery from '../queries/fetchOrders';
 
 class AdminAllOrders extends Component {
+    componentWillMount() {
+        const { currentUser } = firebase.auth();
+        if (!currentUser) {
+            hashHistory.push('admin')
+        }
+    }
     renderOrders() {
         return this.props.fetchOrdersQuery.orders.map(({ id, shippedOn }) => {
             return <li className='collection-item adminProductView adminOrderListItem' key={id}>

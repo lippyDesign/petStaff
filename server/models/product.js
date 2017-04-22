@@ -60,59 +60,96 @@ ProductSchema.statics.addColor = function(id, value) {
   const Color = mongoose.model('color');
   return this.findById(id)
     .then(product => {
+		// find the color by value
       Color.findOne({ value })
         .then(color => {
+			if (!color) {
+				color = new Color({ value });
+			}
             product.colors.push(color);
             color.products.push(product);
             return Promise.all([color.save(), product.save()])
               .then(([color, product]) => product);
         })
+		.catch(res => console.log(res))
     });
 }
 ProductSchema.statics.addSize = function(id, value) {
   const Size = mongoose.model('size');
   return this.findById(id)
     .then(product => {
+		// find the size by value
       Size.findOne({ value })
         .then(size => {
+			if (!size) {
+				size = new Size({ value });
+			}
             product.sizes.push(size);
             size.products.push(product);
             return Promise.all([size.save(), product.save()])
               .then(([size, product]) => product);
         })
+		// if size value was not found in sizes, make a new one
+        .catch(res => console.log(res));
     });
 }
 ProductSchema.statics.deleteProduct = function(id) {
 	return this.findById(id)
 		.then(product => {
+			// remove product's photos
 			if (product.photos.length > 0) {
 				const Photo = mongoose.model('photo');
 				product.photos.forEach(picId => {
 					Photo.findById(picId).then(pic => pic.remove())
 				})
 			}
-      if (product.reviews.length > 0) {
+			// remove product's reviews
+      		if (product.reviews.length > 0) {
 				const Review = mongoose.model('review');
 				product.reviews.forEach(reviewId => {
 					Review.findById(reviewId).then(rev => rev.remove())
 				})
 			}
+			// remove product's sizes
 			if (product.sizes.length > 0) {
 				const Size = mongoose.model('size');
 				product.sizes.forEach(sizeId => {
-					Size.findById(sizeId).then(size => {
+          console.log('sizeId')
+          console.log(sizeId)
+					Size.findById(sizeId)
+          .then(size => {
+            console.log('size')
+            console.log(size)
 						size.products.pull(id)
 						return Promise.all([size.save()])
 					})
+          .catch(res => {
+            console.log('ERROR:')
+            console.log('ERROR:')
+            console.log('ERROR:')
+            console.log(res)
+          })
 				})
 			}
+			// remove product's colors
 			if (product.colors.length > 0) {
 				const Color = mongoose.model('color');
 				product.colors.forEach(colorId => {
-					Color.findById(colorId).then(color => {
+          console.log('colorId')
+          console.log(colorId)
+					Color.findById(colorId)
+          .then(color => {
+            console.log('color')
+            console.log(color)
 						color.products.pull(id)
 						return Promise.all([color.save()])
 					})
+          .catch(res => {
+            console.log('ERROR:')
+            console.log('ERROR:')
+            console.log('ERROR:')
+            console.log(res)
+          })
 				})
 			}
 			product.remove();

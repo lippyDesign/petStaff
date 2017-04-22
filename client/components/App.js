@@ -4,20 +4,15 @@ import firebase from 'firebase';
 import Header from './Header';
 import Footer from './Footer';
 
+import { firebaseConfig } from '../firebaseConfig';
+
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = { cart: [], searchText: '' }
     }
     componentWillMount() {
-        const config = {
-            apiKey: "AIzaSyAVZLEXbWmgu-2qnyLmqH3MoKPlDZ8hlek",
-            authDomain: "petclothes-c14c6.firebaseapp.com",
-            databaseURL: "https://petclothes-c14c6.firebaseio.com",
-            storageBucket: "petclothes-c14c6.appspot.com",
-            messagingSenderId: "726354445820"
-        };
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
     }
     addToCart(item) {
         const alreadyExists = this.state.cart.find(({ id, size, color }) => {

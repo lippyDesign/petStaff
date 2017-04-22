@@ -12,10 +12,9 @@ const path = require('path');
 // Create a new Express application
 const app = express();
 
+// mongoLab URI
 const mLab = require('./mLab');
-console.log(mLab)
-// Replace with your mongoLab URI
-const MONGO_URI = 'mongodb://petstaff:123456@ds045644.mlab.com:45644/petstaff';
+const MONGO_URI = mLab;
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
 mongoose.Promise = global.Promise;
@@ -58,13 +57,14 @@ app.use('/graphql', expressGraphQL({
 //////////////////////////////// EMAIL ///////////////////////////////////
 
 var nodemailer = require('nodemailer');
+const emailConfig = require('./emailConfig');
  
 // create reusable transporter object using SMTP transport 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'vololipu@gmail.com',
-        pass: 'Number1fan!'
+        user: emailConfig.email,
+        pass: emailConfig.password
     }
 });
 

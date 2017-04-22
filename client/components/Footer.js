@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+const companyName = 'Whiskers & Paws Co.'
+
 export default () => <footer className="page-footer grey darken-4">
     <div className="container">
         <div className="row">
             <div className="col l6 s12">
-                <h5 className="white-text">Footer Content</h5>
+                <h5 className="white-text">{companyName}</h5>
                 <p className="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+                <p className="grey-text text-lighten-4">Link to Facebook Page</p>
             </div>
             <div className="col l4 offset-l2 s12">
                 <h5 className="white-text">Links</h5>
@@ -21,7 +24,7 @@ export default () => <footer className="page-footer grey darken-4">
     </div>
     <div className="footer-copyright black">
         <div className="container">
-            LOGO © 2017 Company Name Inc. All rights reserved.
+            LOGO © 2017 {companyName} All rights reserved.
             <a target="_blank" className="grey-text text-lighten-4 right" href="https://github.com/lippyDesign">Created by LippyDesign</a>
         </div>
     </div>

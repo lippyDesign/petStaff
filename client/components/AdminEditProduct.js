@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
 import { graphql } from 'react-apollo';
-import { Link, hashHistory } from 'react-router';
+import { Link } from 'react-router';
 
-import query from '../queries/fetchProductsAdmin';
+// queries to refetch (not going inside of component as props)
+import fetchProductsAdmin from '../queries/fetchProductsAdmin';
 import fetchRandomProducts from '../queries/fetchRandomProducts';
+import fetchProducts from '../queries/fetchProducts';
 
-import addProductMutation from '../mutations/AddProduct';
+// mutations as props
 import addPhotoToProductMutation from '../mutations/AddPhotoToProduct';
 import addColorToProductMutation from '../mutations/AddColorToProduct';
 import addSizeToProductMutation from '../mutations/AddSizeToProduct';
+import addProductMutation from '../mutations/AddSizeToProduct';
 
-class AddProduct extends Component {
+class AdminEditProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -72,158 +74,14 @@ class AddProduct extends Component {
             error: ''
         }
     }
-    componentWillMount() {
-        const { currentUser } = firebase.auth();
-        if (!currentUser) {
-            hashHistory.push('admin')
-        }
-    }
-    onSubmit(e) {
-        e.preventDefault();
-        this.setState({ uploading: true, error: '' });
+    componentDidMount() {
 
-        function uploadImageAsPromise (imageFile, id, i, m) {
-            return new Promise(function (resolve, reject) {
-                var storageRef = firebase.storage().ref().child(`${id}/${i + 1}`);
-                //Upload file
-                var task = storageRef.put(imageFile);
-                //Update progress bar
-                task.on('state_changed',
-                    function complete(){
-                        var downloadURL = task.snapshot.downloadURL;
-                        if (downloadURL) {
-                            console.log('success')
-                            console.log(downloadURL)
-                            m({
-                                variables: { productId: id, photo: downloadURL }
-                            })
-                        }
-                    },
-                    function error(err){
-                        console.log('err')
-                        console.log(err)
-                    }
-                );
-            });
-        }
-
-        const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
-        const { white, black, blue, green, red, otherColorOne, otherColorTwo, otherColorThree } = this.state;
-        const { oneFitsAll, xs, s, m, l, xl } = this.state;
-        const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
-
-        const sizeValidation = [oneFitsAll, xs, s, m, l, xl].some(i => i === true);
-        const colorValidation = [white, black, blue, green, red, otherColorOne, otherColorTwo, otherColorThree].some(i => i);
-        const validation = [sizeValidation, colorValidation, title, price, this.state.fileOne].every(i => i);
-        if (!validation) {
-            return this.setState({
-                uploading: false,
-                error: 'title is required, price is required, main image is required, at least one color is required, at least one size is required'
-            });
-        }
-
-        const dateNow = new Date();
-        const dateAdded = dateNow.valueOf();
-        this.props.addProductMutation({
-            variables: { title, description, price, shipping, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, priceSale: salePrice, assortment: collection },
-            refetchQueries: [{ query }, { query: fetchRandomProducts }]
-        }).then(res => {
-            const { id } = res.data.addProduct;
-            [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
-                if (img) {
-                    const m = this.props.addPhotoToProductMutation;
-                     uploadImageAsPromise(img, id, i, m)
-                }
-            })
-            const whi = {name: 'white', exists: white}
-            const blk = {name: 'black', exists: black}
-            const blu = {name: 'blue', exists: blue}
-            const grn = {name: 'green', exists: green}
-            const rd = {name: 'red', exists: red}
-            const ocOne = {name: otherColorOne, exists: otherColorOne}
-            const ocTwo = {name: otherColorTwo, exists: otherColorTwo}
-            const ocThree = {name: otherColorThree, exists: otherColorThree}
-            const colorArray = [whi, blk, blu, grn, rd, ocOne, ocTwo, ocThree];
-            colorArray.forEach(({ name, exists }) => {
-                if (exists) {
-                    this.props.addColorToProductMutation({
-                        variables: { productId: id, color: name.toLowerCase() }
-                    })
-                }
-            })
-            const oneFitsAllSizes = {name: 'oneSizeFitsAll', exists: oneFitsAll};
-            const extraSmall = {name: 'xs', exists: xs};
-            const small = {name: 's', exists: s};
-            const medium = {name: 'm', exists: m};
-            const large = {name: 'l', exists: l};
-            const extraLarge = {name: 'xl', exists: xl};
-            const sizeArray = [oneFitsAllSizes, extraSmall, small, medium, large, extraLarge];
-            sizeArray.forEach(({ name, exists }) => {
-                if (exists) {
-                    this.props.addSizeToProductMutation({
-                        variables: { productId: id, size: name }
-                    })
-                }
-            })
-        }).then(() => {
-            hashHistory.push('/admin');
-        })
     }
-    handleImageOneChange(e) {
+    onSubmit(e){
         e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileOne: file, imageOnePreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
-    }
-    handleImageTwoChange(e) {
-        e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileTwo: file, imageTwoPreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
-    }
-    handleImageThreeChange(e) {
-        e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileThree: file, imageThreePreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
-    }
-    handleImageFourChange(e) {
-        e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileFour: file, imageFourPreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
-    }
-    handleImageFiveChange(e) {
-        e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileFive: file, imageFivePreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
-    }
-    handleImageSixChange(e) {
-        e.preventDefault();
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        reader.onloadend = () => {
-            this.setState({ fileSix: file, imageSixPreviewUrl: reader.result });
-        }
-        reader.readAsDataURL(file)
     }
     render() {
+        console.log(this.props.product)
         const titleLabel = this.state.title ? "active" : this.state.isTitleActive ? "active" : "";
         const collectionLabel = this.state.collection ? "active" : this.state.isCollectionActive ? "active" : "";
         const priceLabel = this.state.price ? "active" : this.state.isPriceActive ? "active" : "";
@@ -249,7 +107,8 @@ class AddProduct extends Component {
             <div className="row">
                 <Link to="/admin" className="waves-effect waves-light btn blue standardFlex col s6 m4 l2"><i className="material-icons">arrow_back</i> Back</Link>
             </div>
-            <h3 className="textCenter">Add Product</h3>
+            <h3 className="textCenter">Edit Product</h3>
+            <h5 className="textCenter">{this.props.product.id}</h5>
             <div className="row">
                 <div className="input-field col s12 m6">
                     <input
@@ -530,4 +389,4 @@ class AddProduct extends Component {
     }
 }
 
-export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AddProduct))))
+export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AdminEditProduct))));
