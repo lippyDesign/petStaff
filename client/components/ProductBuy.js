@@ -79,7 +79,10 @@ export default class extends Component {
             <div className="divider"></div>
             <span className="cardLabelSmall">Color:</span>
             <ul className="colorSelectorList">
-                {colors.map(({value, id}) => <li className={this.state.selectedColor === value ? 'activeBox' : ''} key={id} onClick={this.setColor.bind(this, value)}>{value}</li>)}
+                {colors.map(({value, id}) => {
+                    value = value.replace(value[0], value[0].toUpperCase());
+                    return <li className={this.state.selectedColor === value ? 'activeBox' : ''} key={id} onClick={this.setColor.bind(this, value)}>{value}</li>
+                })}
             </ul>
 
             <div className="checkoutButtonWrapperProductView">

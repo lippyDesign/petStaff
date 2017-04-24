@@ -61,6 +61,7 @@ export default class extends Component {
     }
     render() {
         const { title, photos, price, priceSale, colors, sizes, id, shipping } = this.props;
+        const colorListClass = colors.length > 3 ? 'colorSelectorList marginBottomZero' : 'colorSelectorList';
         const {cardRevealed, alreadyOpened } = this.state;
         let cardTwo = "cardReveal cardTwoInvisible displayNone";
         if (cardRevealed && alreadyOpened) cardTwo = "cardReveal cardTwoVisible";
@@ -99,8 +100,11 @@ export default class extends Component {
                 </ul>
                 <div className="divider"></div>
                 <span className="cardLabelSmall">Color:</span>
-                <ul className="colorSelectorList">
-                    {colors.map(({value, id}) => <li className={this.state.selectedColor === value ? 'activeBox' : ''} key={id} onClick={this.setColor.bind(this, value)}>{value}</li>)}
+                <ul className={colorListClass}>
+                    {colors.map(({value, id}) => {
+                        value = value.replace(value[0], value[0].toUpperCase());
+                        return <li className={this.state.selectedColor === value ? 'activeBox' : ''} key={id} onClick={this.setColor.bind(this, value)}>{value}</li>
+                    })}
                 </ul>
 
                 <div className="checkoutButtonWrapper">
