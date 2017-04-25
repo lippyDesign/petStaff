@@ -3,6 +3,8 @@ import firebase from 'firebase';
 import { graphql } from 'react-apollo';
 import { Link, hashHistory } from 'react-router';
 
+import cameraPic from '../../style/selectPic.png'
+
 import query from '../queries/fetchProductsAdmin';
 import fetchRandomProducts from '../queries/fetchRandomProducts';
 
@@ -239,12 +241,12 @@ class AddProduct extends Component {
         const otherColorTwoLabel = this.state.otherColorTwo ? "active" : this.state.isOtherColorTwoActive ? "active" : "";
         const otherColorThreeLabel = this.state.otherColorThree ? "active" : this.state.isOtherColorThreeActive ? "active" : "";
         const descriptionLabel = this.state.description ? "active" : this.state.isDescriptionActive ? "active" : "";
-        const imageOnePreview = this.state.imageOnePreviewUrl ? <img className="imgSelect" src={this.state.imageOnePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageThreePreview = this.state.imageThreePreviewUrl ? <img className="imgSelect" src={this.state.imageThreePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageFourPreview = this.state.imageFourPreviewUrl ? <img className="imgSelect" src={this.state.imageFourPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageFivePreview = this.state.imageFivePreviewUrl ? <img className="imgSelect" src={this.state.imageFivePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageSixPreview = this.state.imageSixPreviewUrl ? <img className="imgSelect" src={this.state.imageSixPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
+        const imageOnePreview = this.state.imageOnePreviewUrl ? <img className="imgSelect" src={this.state.imageOnePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageThreePreview = this.state.imageThreePreviewUrl ? <img className="imgSelect" src={this.state.imageThreePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageFourPreview = this.state.imageFourPreviewUrl ? <img className="imgSelect" src={this.state.imageFourPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageFivePreview = this.state.imageFivePreviewUrl ? <img className="imgSelect" src={this.state.imageFivePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageSixPreview = this.state.imageSixPreviewUrl ? <img className="imgSelect" src={this.state.imageSixPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
         return <form className="container addProductForm" onSubmit={this.onSubmit.bind(this)}>
             <div className="row">
                 <Link to="/admin" className="waves-effect waves-light btn blue standardFlex col s6 m4 l2"><i className="material-icons">arrow_back</i> Back</Link>

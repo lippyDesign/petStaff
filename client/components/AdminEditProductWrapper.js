@@ -15,7 +15,6 @@ class AdminEditProductWrapper extends Component {
     //     }
     // }
     render() {
-        console.log(this.props.data.product)
         if (!this.props.data.product) return <div/>
         return <AdminEditProduct product={this.props.data.product} />
     }

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
 import { Link } from 'react-router';
 
+import cameraPic from '../../style/selectPic.png'
+
 // queries to refetch (not going inside of component as props)
 import fetchProductsAdmin from '../queries/fetchProductsAdmin';
 import fetchRandomProducts from '../queries/fetchRandomProducts';
@@ -75,13 +77,16 @@ class AdminEditProduct extends Component {
         }
     }
     componentDidMount() {
-
+        const { title, assortment, description, prise, priseSale, shipping, statOne, statTwo, statThree, statFour, statFive, statSix, sizes, colors } = this.props.product;
+        console.log(this.props.product)
+        this.setState({
+            title
+        })
     }
     onSubmit(e){
         e.preventDefault();
     }
     render() {
-        console.log(this.props.product)
         const titleLabel = this.state.title ? "active" : this.state.isTitleActive ? "active" : "";
         const collectionLabel = this.state.collection ? "active" : this.state.isCollectionActive ? "active" : "";
         const priceLabel = this.state.price ? "active" : this.state.isPriceActive ? "active" : "";
@@ -97,12 +102,13 @@ class AdminEditProduct extends Component {
         const otherColorTwoLabel = this.state.otherColorTwo ? "active" : this.state.isOtherColorTwoActive ? "active" : "";
         const otherColorThreeLabel = this.state.otherColorThree ? "active" : this.state.isOtherColorThreeActive ? "active" : "";
         const descriptionLabel = this.state.description ? "active" : this.state.isDescriptionActive ? "active" : "";
-        const imageOnePreview = this.state.imageOnePreviewUrl ? <img className="imgSelect" src={this.state.imageOnePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageThreePreview = this.state.imageThreePreviewUrl ? <img className="imgSelect" src={this.state.imageThreePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageFourPreview = this.state.imageFourPreviewUrl ? <img className="imgSelect" src={this.state.imageFourPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageFivePreview = this.state.imageFivePreviewUrl ? <img className="imgSelect" src={this.state.imageFivePreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
-        const imageSixPreview = this.state.imageSixPreviewUrl ? <img className="imgSelect" src={this.state.imageSixPreviewUrl} /> : <img className="imgSelect" src='http://vignette1.wikia.nocookie.net/towerofsaviors/images/4/47/Placeholder.png/revision/20140518072131' />;
+        const imageOnePreview = this.state.imageOnePreviewUrl ? <img className="imgSelect" src={this.state.imageOnePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src={cameraPic}
+         />;
+        const imageThreePreview = this.state.imageThreePreviewUrl ? <img className="imgSelect" src={this.state.imageThreePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageFourPreview = this.state.imageFourPreviewUrl ? <img className="imgSelect" src={this.state.imageFourPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageFivePreview = this.state.imageFivePreviewUrl ? <img className="imgSelect" src={this.state.imageFivePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
+        const imageSixPreview = this.state.imageSixPreviewUrl ? <img className="imgSelect" src={this.state.imageSixPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
         return <form className="container addProductForm" onSubmit={this.onSubmit.bind(this)}>
             <div className="row">
                 <Link to="/admin" className="waves-effect waves-light btn blue standardFlex col s6 m4 l2"><i className="material-icons">arrow_back</i> Back</Link>
@@ -384,7 +390,7 @@ class AdminEditProduct extends Component {
                 </div>
             </div>
             <p className='textRed textCenter'>{this.state.error}</p>
-            {this.state.uploading ? <div className="row"><div className="progress col s12 m6 offset-m3"><div className="indeterminate"></div></div></div> : <div className="row"><button className="btn waves-effect waves-light col s12 m6 offset-m3">Submit</button></div>}
+            {this.state.uploading ? <div className="row"><div className="progress col s12 m6 offset-m3"><div className="indeterminate"></div></div></div> : <div className="row"><button className="btn waves-effect waves-light col s12 m6 offset-m3">save changes</button></div>}
         </form>;
     }
 }
