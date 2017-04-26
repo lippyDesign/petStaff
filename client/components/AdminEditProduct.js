@@ -73,17 +73,71 @@ class AdminEditProduct extends Component {
             imageFivePreviewUrl: '',
             imageSixPreviewUrl: '',
             uploading: false,
-            error: ''
+            error: '',
+            otherColors: []
         }
     }
     componentDidMount() {
-        const { title, assortment, description, prise, priseSale, shipping, statOne, statTwo, statThree, statFour, statFive, statSix, sizes, colors } = this.props.product;
-        console.log(this.props.product)
+        // when component mounts we'll get the data about the product (as props from the wrapper) and fill in the form
+        const { title, assortment, description, price, priceSale, shipping, statOne, statTwo, statThree, statFour, statFive, statSix, sizes, colors, photos } = this.props.product;
         this.setState({
-            title
-        })
+            title,
+            collection: assortment,
+            description,
+            price,
+            salePrice: priceSale,
+            shipping,
+            statOne, statTwo, statThree, statFour, statFive, statSix,
+        });
+        sizes.forEach(({ value }) => {
+            if (value === 'oneSizeFitsAll') this.setState({ oneFitsAll: true });
+            if (value === 'xs') this.setState({ xs: true });
+            if (value === 's') this.setState({ s: true });
+            if (value === 'm') this.setState({ m: true });
+            if (value === 'l') this.setState({ l: true });
+            if (value === 'xl') this.setState({ xl: true });
+        });
+        colors.forEach(({ value }) => {
+            if (value === 'white') this.setState({ white: true });
+            else if (value === 'black') this.setState({ black: true });
+            else if (value === 'blue') this.setState({ blue: true });
+            else if (value === 'green') this.setState({ green: true });
+            else if (value === 'red') this.setState({ red: true });
+            else {
+                const arr = this.state.otherColors;
+                arr.push(value);
+                this.setState({ otherColors: arr })
+            }
+        });
+        if (photos[0]) this.setState({ imageOnePreviewUrl: photos[0].url })
+        if (photos[1]) this.setState({ imageTwoPreviewUrl: photos[1].url })
+        if (photos[2]) this.setState({ imageThreePreviewUrl: photos[2].url })
+        if (photos[3]) this.setState({ imageFourPreviewUrl: photos[3].url })
+        if (photos[4]) this.setState({ imageFivePreviewUrl: photos[4].url })
+        if (photos[5]) this.setState({ imageSixPreviewUrl: photos[5].url })
+    }
+    renderOtherColors() {
+        // if product contains more colors than those in check boxes, they will be rendered in a list
+        if (this.state.otherColors.length) {
+            return <div className="col s12">
+                <ul className="collection">
+                    {this.state.otherColors.map(color => <li key={color} className='collection-item adminProductView'>
+                        <span>{color}</span>
+                        <i onClick={this.onColorDelete.bind(this, color)} className='material-icons adminDeleteProductIcon'>delete</i>
+                    </li>)}
+                </ul>
+            </div>
+        }
+    }
+    onColorDelete(color) {
+        // removes color from additional color list
+        const arr = this.state.otherColors;
+        const index = arr.indexOf(color);
+        arr.splice(index, 1);
+        this.setState({ otherColors: arr })
     }
     onSubmit(e){
+        // save changes to the product into the database
         e.preventDefault();
     }
     render() {
@@ -103,8 +157,7 @@ class AdminEditProduct extends Component {
         const otherColorThreeLabel = this.state.otherColorThree ? "active" : this.state.isOtherColorThreeActive ? "active" : "";
         const descriptionLabel = this.state.description ? "active" : this.state.isDescriptionActive ? "active" : "";
         const imageOnePreview = this.state.imageOnePreviewUrl ? <img className="imgSelect" src={this.state.imageOnePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
-        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src={cameraPic}
-         />;
+        const imageTwoPreview = this.state.imageTwoPreviewUrl ? <img className="imgSelect" src={this.state.imageTwoPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
         const imageThreePreview = this.state.imageThreePreviewUrl ? <img className="imgSelect" src={this.state.imageThreePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
         const imageFourPreview = this.state.imageFourPreviewUrl ? <img className="imgSelect" src={this.state.imageFourPreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
         const imageFivePreview = this.state.imageFivePreviewUrl ? <img className="imgSelect" src={this.state.imageFivePreviewUrl} /> : <img className="imgSelect" src={cameraPic} />;
@@ -293,6 +346,7 @@ class AdminEditProduct extends Component {
                         <label htmlFor="red">Red</label>
                     </span>
                 </div>
+                {this.renderOtherColors()}
                 <div className="input-field col s12 l4">
                     <input
                         onFocus={() => this.setState({ isOtherColorOneActive: "active" })}

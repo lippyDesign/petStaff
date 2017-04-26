@@ -61,7 +61,12 @@ export default class extends Component {
     }
     render() {
         const { title, photos, price, priceSale, colors, sizes, id, shipping } = this.props;
-        const colorListClass = colors.length > 3 ? 'colorSelectorList marginBottomZero' : 'colorSelectorList';
+        let colorListClass = colors.length > 3 ? 'colorSelectorList marginBottomZero' : 'colorSelectorList';
+        let sizeListClass = 'sizeSelectorList';
+        if (colors.length > 6) {
+            colorListClass = 'colorSelectorList marginBottomZero smallColorIcons';
+            sizeListClass = 'sizeSelectorList marginBottomZero smallColorIcons';
+        }
         const {cardRevealed, alreadyOpened } = this.state;
         let cardTwo = "cardReveal cardTwoInvisible displayNone";
         if (cardRevealed && alreadyOpened) cardTwo = "cardReveal cardTwoVisible";
@@ -92,7 +97,7 @@ export default class extends Component {
                 </ul>
                 <div className="divider"></div>
                 <span className="cardLabelSmall">Size:</span>
-                <ul className="sizeSelectorList">
+                <ul className={sizeListClass}>
                     {sizes.map(({value, id}) => {
                         if (value === 'oneSizeFitsAll') return <li id='oneSizeFitsAll' key={id}>{'One Size Fits All'}</li>
                         return <li className={this.state.selectedSize === value ? 'activeBox' : ''} key={id} onClick={this.setSize.bind(this, value)}>{value.toUpperCase()}</li>

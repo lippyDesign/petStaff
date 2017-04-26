@@ -18,9 +18,6 @@ class Admin extends Component {
             }})
         }
     }
-    componentWillUpdate(nextProps) {
-        
-    }
     onSubmit(event) {
         event.preventDefault();
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
