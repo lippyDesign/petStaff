@@ -4,11 +4,11 @@ import query from '../queries/shippingAndReturns';
 
 class ShippingAndReturns extends Component {
     render() {
-        const { heading, content, loading } = this.props.data;
+        const { shippingAndReturns, content, loading } = this.props.data;
         if (loading) return <div />;
         return <div className="row container textCenter">
-            <h3 className="textWhite">{heading}</h3>
-            <p className="shippingAndReturnsSection">{content}</p>
+            <h3 className="textWhite">{shippingAndReturns ? shippingAndReturns.heading : ''}</h3>
+            <p className="shippingAndReturnsSection">{shippingAndReturns ? shippingAndReturns.content : ''}</p>
         </div>;
     }
 }

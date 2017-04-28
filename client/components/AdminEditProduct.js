@@ -13,7 +13,7 @@ import fetchProducts from '../queries/fetchProducts';
 import addPhotoToProductMutation from '../mutations/AddPhotoToProduct';
 import addColorToProductMutation from '../mutations/AddColorToProduct';
 import addSizeToProductMutation from '../mutations/AddSizeToProduct';
-import addProductMutation from '../mutations/AddSizeToProduct';
+import editProductMutation from '../mutations/EditProduct';
 
 class AdminEditProduct extends Component {
     constructor(props) {
@@ -185,11 +185,16 @@ class AdminEditProduct extends Component {
 
         const dateNow = new Date();
         const dateModified = dateNow.valueOf();
-        // this.props.addProductMutation({
-        //     variables: { title, description, price, shipping, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, priceSale: salePrice, assortment: collection },
-        //     refetchQueries: [{ query }, { query: fetchRandomProducts }]
-        // }).then(res => {
-        //     const { id } = res.data.addProduct;
+        const id = this.props.product.id
+
+        const { imageOnePreviewUrl, imageTwoPreviewUrl, imageThreePreviewUrl, imageFourPreviewUrl, imageFivePreviewUrl, imageSixPreviewUrl } = this.state;
+
+        this.props.editProductMutation({
+            variables: { id, title, description, assortment: collection, price, priceSale: salePrice, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix,
+                imageMain: imageOnePreviewUrl || '', imageTwo: imageTwoPreviewUrl || '', imageThree: imageThreePreviewUrl || '', imageFour: imageFourPreviewUrl || '', imageFive: imageFivePreviewUrl || '', imageSix: imageSixPreviewUrl || '' },
+            refetchQueries: [{ query: fetchProducts }, { query: fetchProductsAdmin }, { query: fetchRandomProducts }]
+        })
+        // .then(res => {
         //     [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
         //         if (img) {
         //             const m = this.props.addPhotoToProductMutation;
@@ -593,4 +598,4 @@ class AdminEditProduct extends Component {
     }
 }
 
-export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(addProductMutation, {name : 'addProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AdminEditProduct))));
+export default graphql(addSizeToProductMutation, {name: 'addSizeToProductMutation'})(graphql(addColorToProductMutation, {name : 'addColorToProductMutation'})(graphql(editProductMutation, {name : 'editProductMutation'})(graphql(addPhotoToProductMutation, {name: 'addPhotoToProductMutation'})(AdminEditProduct))));

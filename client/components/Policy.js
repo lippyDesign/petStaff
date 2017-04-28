@@ -4,11 +4,11 @@ import query from '../queries/policy';
 
 class Policy extends Component {
     render() {
-        const { heading, content, loading } = this.props.data;
+        const { policy, content, loading } = this.props.data;
         if (loading) return <div />;
         return <div className="row container textCenter">
-            <h3 className="textWhite">{heading}</h3>
-            <p className="policySection">{content}</p>
+            <h3 className="textWhite">{policy ? policy.heading : ''}</h3>
+            <p className="policySection">{policy ? policy.content : ''}</p>
         </div>;
     }
 }

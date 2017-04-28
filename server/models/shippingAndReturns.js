@@ -8,7 +8,7 @@ const ShippingAndReturnsSchema = new Schema({
 
 ShippingAndReturnsSchema.statics.edit = function(heading, content) {
   const ShippingAndReturns = mongoose.model('shippingAndReturns');
-  return this.find({})
+  return this.findOne({})
     .then(shippingSection => {
       // if section does not exist yet
       if (!shippingSection) {

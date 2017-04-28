@@ -6,7 +6,9 @@ class AdminSupDocForm extends Component {
         this.state = { heading: '', content: '' }
     }
     componentDidMount() {
-        const { heading, content } = this.props;
+        let { heading, content } = this.props;
+        if (!heading) heading = '';
+        if (!content) content = '';
         this.setState({ heading, content });
     }
     onSubmit(event) {
@@ -18,8 +20,8 @@ class AdminSupDocForm extends Component {
         }
     }
     render() {
-        return <div className="row">
-            <form className="col s12 m6 offset-m3 l4 offset-l4 adminSuppDocForm" onSubmit={this.onSubmit.bind(this)}>
+        return <div>
+            <form className="adminSuppDocForm" onSubmit={this.onSubmit.bind(this)}>
                 <div className="input-field">
                     <input
                         value={this.state.heading}
@@ -32,9 +34,10 @@ class AdminSupDocForm extends Component {
                         value={this.state.content}
                         onChange={e => this.setState({content: e.target.value})}
                         placeholder='Content'
+                        className='materialize-textarea'
                     ></textarea>
                 </div>
-                <button className="btn center-align col s12 l6 offset-l3">{this.props.buttonName || 'Submit'}</button>
+                <button className="btn">{this.props.buttonName || 'Submit'}</button>
             </form>
         </div>;
     }

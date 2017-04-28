@@ -47,6 +47,10 @@
 .marginBottomZero {
     margin-bottom: 0;
 }
+.marginTopBottomFifty {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
 body {
     background-image: url("backgroundThree.jpg");
 }
@@ -600,7 +604,7 @@ input[type="file"] {
 .contactUsForm, .adminSuppDocForm {
     background: rgb(233, 237, 232);
     border-radius: 4px;
-    padding: 5px 15px;
+    padding: 15px 15px;
 }
 .whyUsWrapper {
     display: flex;

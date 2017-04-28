@@ -90,19 +90,19 @@ const RootQueryType = new GraphQLObjectType({
 		about: {
 			type: AboutType,
 			resolve() {
-				return About.find({});
+				return About.findOne({});
 			}
 		},
 		policy: {
 			type: PolicyType,
 			resolve() {
-				return Policy.find({});
+				return Policy.findOne({});
 			}
 		},
 		shippingAndReturns: {
 			type: ShippingAndReturnsType,
 			resolve() {
-				return ShippingAndReturns.find({});
+				return ShippingAndReturns.findOne({});
 			}
 		}
 	}

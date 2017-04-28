@@ -26,14 +26,16 @@ class AdminEditAbout extends Component {
         });
     }
     render() {
-        const { content, header, loading } = this.props.data;
+        const { about, loading } = this.props.data;
+        const heading = about ? about.heading : '';
+        const content = about ? about.content : '';
         if (loading) return <div />
-        return <div className="container">
+        return <div className="container paddingTopBottomFifty">
             <div className="row">
                 <Link to="/admin" className="waves-effect waves-light btn blue standardFlex col s6 m4 l2"><i className="material-icons">arrow_back</i> Back</Link>
             </div>
             <h3 className="textWhite center-align">Edit About Page</h3>
-            <AdminSuppDocForm onSubmit={this.onSubmit.bind(this)} buttonName="edit about page" header={header} content={content} />
+            <AdminSuppDocForm onSubmit={this.onSubmit.bind(this)} buttonName="edit about page" heading={heading} content={content} />
         </div>;
     }
 }

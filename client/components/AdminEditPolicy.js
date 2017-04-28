@@ -26,14 +26,16 @@ class AdminEditPolicy extends Component {
         });
     }
     render() {
-        const { content, header, loading } = this.props.data;
+        const { policy, loading } = this.props.data;
+        const heading = policy ? policy.heading : '';
+        const content = policy ? policy.content : '';
         if (loading) return <div />
-        return <div className="container">
+        return <div className="container paddingTopBottomFifty">
             <div className="row">
                 <Link to="/admin" className="waves-effect waves-light btn blue standardFlex col s6 m4 l2"><i className="material-icons">arrow_back</i> Back</Link>
             </div>
             <h3 className="textWhite center-align">Edit Policy Page</h3>
-            <AdminSuppDocForm onSubmit={this.onSubmit.bind(this)} buttonName="edit policy page" header={header} content={content} />
+            <AdminSuppDocForm onSubmit={this.onSubmit.bind(this)} buttonName="edit policy page" heading={heading} content={content} />
         </div>;
     }
 }

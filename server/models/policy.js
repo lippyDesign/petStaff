@@ -8,7 +8,7 @@ const PolicySchema = new Schema({
 
 PolicySchema.statics.edit = function(heading, content) {
   const Policy = mongoose.model('policy');
-  return this.find({})
+  return this.findOne({})
     .then(policySection => {
       // if section does not exist yet
       if (!policySection) {

@@ -8,7 +8,7 @@ const AboutSchema = new Schema({
 
 AboutSchema.statics.edit = function(heading, content) {
   const About = mongoose.model('about');
-  return this.find({})
+  return this.findOne({})
     .then(aboutSection => {
       // if section does not exist yet
       if (!aboutSection) {

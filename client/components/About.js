@@ -4,11 +4,11 @@ import query from '../queries/about';
 
 class About extends Component {
     render() {
-        const { heading, content, loading } = this.props.data;
+        const { about, loading } = this.props.data;
         if (loading) return <div />;
         return <div className="row container textCenter">
-            <h3 className="textWhite">{heading}</h3>
-            <p className="aboutSection">{content}</p>
+            <h3 className="textWhite">{about ? about.heading : ''}</h3>
+            <p className="aboutSection">{about ? about.content : ''}</p>
         </div>;
     }
 }

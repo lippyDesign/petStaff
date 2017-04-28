@@ -93,6 +93,7 @@ ProductSchema.statics.addSize = function(id, value) {
     });
 }
 ProductSchema.statics.editProduct = function(id, title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix) {
+  const imgs = [imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix]
   return this.findById(id)
     .then(product => {
       return product.update({
@@ -106,7 +107,19 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
         statOne, statTwo, statThree, statFour, statFive, statSix
       })
       .then(() => {
-        return this.findById(id).then(product => product);
+        return this.findById(id).then(product => {
+          const Photo = mongoose.model('photo');
+          product.photos.forEach(picId => {
+            Photo.findById(picId).then(pic => {
+              if (imgs.indexOf(pic.url) === -1) {
+                pic.remove().then(() => {
+                  product.photos.pull({ _id: picId })
+                  product.save()
+                });
+              }
+            })
+          })
+        });
       })
     })
 }

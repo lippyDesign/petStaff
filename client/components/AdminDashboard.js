@@ -19,9 +19,9 @@ class AdminDashboard extends Component {
                 <a onClick={this.logout.bind(this)} className="right waves-effect waves-light btn red">Log Out</a>
             </div>
             <div className="row container">
-                <Link className="btn black" to="/addProduct">Edit About</Link>
-                <Link className="btn black marginLeftRightTwenty" to="/adminorders">Edit Policy</Link>
-                <Link className="btn black marginLeftRightTwenty" to="/addProduct">Edit S&H</Link>
+                <Link className="btn amber darken-3" to="/aboutedit">Edit About</Link>
+                <Link className="btn amber darken-3 marginLeftRightTwenty" to="/policyedit">Edit Policy</Link>
+                <Link className="btn amber darken-3" to="/shippingandreturnsedit">Edit S&H</Link>
             </div>
             <AdminProductList />
         </section>
