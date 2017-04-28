@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+import query from '../queries/about';
 
-export default () => {
-    return <div className="row whyUsWrapper">
-        <h3 className="textWhite">About</h3>
-    </div>;
+class About extends Component {
+    render() {
+        const { heading, content, loading } = this.props.data;
+        if (loading) return <div />;
+        return <div className="row container textCenter">
+            <h3 className="textWhite">{heading}</h3>
+            <p className="aboutSection">{content}</p>
+        </div>;
+    }
 }
+
+export default graphql(query)(About);

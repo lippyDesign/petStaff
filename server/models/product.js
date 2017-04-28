@@ -63,15 +63,15 @@ ProductSchema.statics.addColor = function(id, value) {
 		// find the color by value
       Color.findOne({ value })
         .then(color => {
-			if (!color) {
-				color = new Color({ value });
-			}
-            product.colors.push(color);
-            color.products.push(product);
-            return Promise.all([color.save(), product.save()])
-              .then(([color, product]) => product);
+          if (!color) {
+            color = new Color({ value });
+          }
+          product.colors.push(color);
+          color.products.push(product);
+          return Promise.all([color.save(), product.save()])
+            .then(([color, product]) => product);
         })
-		.catch(res => console.log(res))
+		//.catch(res => console.log(res))
     });
 }
 ProductSchema.statics.addSize = function(id, value) {
@@ -81,17 +81,34 @@ ProductSchema.statics.addSize = function(id, value) {
 		// find the size by value
       Size.findOne({ value })
         .then(size => {
-			if (!size) {
-				size = new Size({ value });
-			}
-            product.sizes.push(size);
-            size.products.push(product);
-            return Promise.all([size.save(), product.save()])
-              .then(([size, product]) => product);
+          if (!size) {
+            size = new Size({ value });
+          }
+          product.sizes.push(size);
+          size.products.push(product);
+          return Promise.all([size.save(), product.save()])
+            .then(([size, product]) => product);
         })
-		// if size value was not found in sizes, make a new one
-        .catch(res => console.log(res));
+        //.catch(res => console.log(res));
     });
+}
+ProductSchema.statics.editProduct = function(id, title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix) {
+  return this.findById(id)
+    .then(product => {
+      return product.update({
+        title,
+        description,
+        assortment,
+        price,
+        priceSale,
+        shipping,
+        dateModified,
+        statOne, statTwo, statThree, statFour, statFive, statSix
+      })
+      .then(() => {
+        return this.findById(id).then(product => product);
+      })
+    })
 }
 ProductSchema.statics.deleteProduct = function(id) {
 	return this.findById(id)

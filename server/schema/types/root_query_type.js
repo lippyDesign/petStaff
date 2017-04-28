@@ -9,6 +9,12 @@ const ReviewType = require('./review_type');
 const Review = mongoose.model('review');
 const OrderType = require('./order_type');
 const Order = mongoose.model('order');
+const AboutType = require('./about_type');
+const About = mongoose.model('about');
+const PolicyType = require('./policy_type');
+const Policy = mongoose.model('policy');
+const ShippingAndReturnsType = require('./shipping_and_returns_type');
+const ShippingAndReturns = mongoose.model('shippingAndReturns');
 
 const RootQueryType = new GraphQLObjectType({
 	name: 'RootQueryType',
@@ -79,6 +85,24 @@ const RootQueryType = new GraphQLObjectType({
 			args: { id: { type: new GraphQLNonNull(GraphQLID) } },
 			resolve(parnetValue, { id }) {
 				return Order.findById(id);
+			}
+		},
+		about: {
+			type: AboutType,
+			resolve() {
+				return About.find({});
+			}
+		},
+		policy: {
+			type: PolicyType,
+			resolve() {
+				return Policy.find({});
+			}
+		},
+		shippingAndReturns: {
+			type: ShippingAndReturnsType,
+			resolve() {
+				return ShippingAndReturns.find({});
 			}
 		}
 	}

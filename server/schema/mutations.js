@@ -21,7 +21,12 @@ const OrderType = require('./types/order_type');
 const Order = mongoose.model('order');
 const OrderItemType = require('./types/order_item_type');
 const OrderItem = mongoose.model('orderItem');
-
+const AboutType = require('./types/about_type');
+const About = mongoose.model('about');
+const PolicyType = require('./types/policy_type');
+const Policy = mongoose.model('policy');
+const ShippingAndReturnsType = require('./types/shipping_and_returns_type');
+const ShippingAndReturns = mongoose.model('shippingAndReturns');
 
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -96,18 +101,46 @@ const mutation = new GraphQLObjectType({
                 return Product.addSize(productId, size);
             }
         },
-        addColor: {
-            type: ColorType,
-            args: { value: { type: GraphQLString } },
-            resolve(parentValue, { value }) {
-                return (new Color({ value })).save();
-            }
-        },
-        addSize: {
-            type: SizeType,
-            args: { value: { type: GraphQLString } },
-            resolve(parentValue, { value }) {
-                return (new Size({ value })).save();
+        // addColor: {
+        //     type: ColorType,
+        //     args: { value: { type: GraphQLString } },
+        //     resolve(parentValue, { value }) {
+        //         return (new Color({ value })).save();
+        //     }
+        // },
+        // addSize: {
+        //     type: SizeType,
+        //     args: { value: { type: GraphQLString } },
+        //     resolve(parentValue, { value }) {
+        //         return (new Size({ value })).save();
+        //     }
+        // },
+        editProduct: {
+            type: ProductType,
+            args: {
+                id: { type: GraphQLID },
+                title: { type: GraphQLString },
+                description: { type: GraphQLString },
+                assortment: { type: GraphQLString },
+                price: { type: GraphQLString },
+                priceSale: { type: GraphQLString },
+                shipping: { type: GraphQLString },
+                dateModified: { type: GraphQLString },
+                statOne: { type: GraphQLString },
+                statTwo: { type: GraphQLString },
+                statThree: { type: GraphQLString },
+                statFour: { type: GraphQLString },
+                statFive: { type: GraphQLString },
+                statSix: { type: GraphQLString },
+                imageMain: { type: GraphQLString },
+                imageTwo: { type: GraphQLString },
+                imageThree: { type: GraphQLString },
+                imageFour: { type: GraphQLString },
+                imageFive: { type: GraphQLString },
+                imageSix: { type: GraphQLString },
+            },
+            resolve(parentValue, { title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix, id }) {
+                return Product.editProduct(id, title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix);
             }
         },
         deleteProduct: {
@@ -260,7 +293,37 @@ const mutation = new GraphQLObjectType({
             resolve(parentValue, { id }) {
                 return User.remove({ _id: id });
             }
-        }
+        },
+        editAboutPage: {
+            type: AboutType,
+            args: {
+                heading: { type: GraphQLString },
+                content: { type: GraphQLString },
+            },
+            resolve(parentValue, { heading, content }) {
+                return About.edit(heading, content);
+            }
+        },
+        editPolicyPage: {
+            type: PolicyType,
+            args: {
+                heading: { type: GraphQLString },
+                content: { type: GraphQLString },
+            },
+            resolve(parentValue, { heading, content }) {
+                return Policy.edit(heading, content);
+            }
+        },
+        editShippingAndReturnsPage: {
+            type: ShippingAndReturnsType,
+            args: {
+                heading: { type: GraphQLString },
+                content: { type: GraphQLString },
+            },
+            resolve(parentValue, { heading, content }) {
+                return ShippingAndReturns.edit(heading, content);
+            }
+        },
     }
 });
 

@@ -136,9 +136,153 @@ class AdminEditProduct extends Component {
         arr.splice(index, 1);
         this.setState({ otherColors: arr })
     }
-    onSubmit(e){
+    onSubmit(e) {
         // save changes to the product into the database
         e.preventDefault();
+        this.setState({ uploading: true, error: '' });
+
+        function uploadImageAsPromise (imageFile, id, i, m) {
+            return new Promise(function (resolve, reject) {
+                var storageRef = firebase.storage().ref().child(`${id}/${i + 1}`);
+                //Upload file
+                var task = storageRef.put(imageFile);
+                //Update progress bar
+                task.on('state_changed',
+                    function complete(){
+                        var downloadURL = task.snapshot.downloadURL;
+                        if (downloadURL) {
+                            console.log('success')
+                            console.log(downloadURL)
+                            m({
+                                variables: { productId: id, photo: downloadURL }
+                            })
+                        }
+                    },
+                    function error(err){
+                        console.log('err')
+                        console.log(err)
+                    }
+                );
+            });
+        }
+
+        const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
+        console.log(fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix)
+        const { white, black, blue, green, red, otherColorOne, otherColorTwo, otherColorThree } = this.state;
+        const { oneFitsAll, xs, s, m, l, xl } = this.state;
+        const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
+
+        const sizeValidation = [oneFitsAll, xs, s, m, l, xl].some(i => i === true);
+        const colorValidation = [white, black, blue, green, red, otherColorOne, otherColorTwo, otherColorThree, this.state.otherColors.length].some(i => i);
+        const imageValidation = this.state.fileOne || this.state.imageOnePreviewUrl;
+        const validation = [sizeValidation, colorValidation, title, price, imageValidation].every(i => i);
+        if (!validation) {
+            return this.setState({
+                uploading: false,
+                error: 'title, price, main image, at least one color and at least one size are required'
+            });
+        }
+
+        const dateNow = new Date();
+        const dateModified = dateNow.valueOf();
+        // this.props.addProductMutation({
+        //     variables: { title, description, price, shipping, dateAdded, statOne, statTwo, statThree, statFour, statFive, statSix, priceSale: salePrice, assortment: collection },
+        //     refetchQueries: [{ query }, { query: fetchRandomProducts }]
+        // }).then(res => {
+        //     const { id } = res.data.addProduct;
+        //     [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
+        //         if (img) {
+        //             const m = this.props.addPhotoToProductMutation;
+        //              uploadImageAsPromise(img, id, i, m)
+        //         }
+        //     })
+        //     const whi = {name: 'white', exists: white}
+        //     const blk = {name: 'black', exists: black}
+        //     const blu = {name: 'blue', exists: blue}
+        //     const grn = {name: 'green', exists: green}
+        //     const rd = {name: 'red', exists: red}
+        //     const ocOne = {name: otherColorOne, exists: otherColorOne}
+        //     const ocTwo = {name: otherColorTwo, exists: otherColorTwo}
+        //     const ocThree = {name: otherColorThree, exists: otherColorThree}
+        //     const colorArray = [whi, blk, blu, grn, rd, ocOne, ocTwo, ocThree];
+        //     colorArray.forEach(({ name, exists }) => {
+        //         if (exists) {
+        //             this.props.addColorToProductMutation({
+        //                 variables: { productId: id, color: name.toLowerCase() }
+        //             })
+        //         }
+        //     })
+        //     const oneFitsAllSizes = {name: 'oneSizeFitsAll', exists: oneFitsAll};
+        //     const extraSmall = {name: 'xs', exists: xs};
+        //     const small = {name: 's', exists: s};
+        //     const medium = {name: 'm', exists: m};
+        //     const large = {name: 'l', exists: l};
+        //     const extraLarge = {name: 'xl', exists: xl};
+        //     const sizeArray = [oneFitsAllSizes, extraSmall, small, medium, large, extraLarge];
+        //     sizeArray.forEach(({ name, exists }) => {
+        //         if (exists) {
+        //             this.props.addSizeToProductMutation({
+        //                 variables: { productId: id, size: name }
+        //             })
+        //         }
+        //     })
+        // }).then(() => {
+        //     hashHistory.push('/admin');
+        // })
+    }
+    handleImageOneChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileOne: file, imageOnePreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
+    }
+    handleImageTwoChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileTwo: file, imageTwoPreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
+    }
+    handleImageThreeChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileThree: file, imageThreePreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
+    }
+    handleImageFourChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileFour: file, imageFourPreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
+    }
+    handleImageFiveChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileFive: file, imageFivePreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
+    }
+    handleImageSixChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({ fileSix: file, imageSixPreviewUrl: reader.result });
+        }
+        reader.readAsDataURL(file)
     }
     render() {
         const titleLabel = this.state.title ? "active" : this.state.isTitleActive ? "active" : "";
