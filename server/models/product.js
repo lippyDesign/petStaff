@@ -1,3 +1,4 @@
+const async = require('async');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -93,7 +94,45 @@ ProductSchema.statics.addSize = function(id, value) {
     });
 }
 ProductSchema.statics.editProduct = function(id, title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix) {
-  const imgs = [imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix]
+  const imgs = [];
+  [imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix].forEach(im => {
+    if (im) imgs.push(im)
+  });
+  console.log(imgs)
+  console.log('=======================================')
+  const Photo = mongoose.model('photo');
+  // const photos = [];
+  // function callback(item) {
+  //   console.log(item)
+  //   photos.push(item)
+  // }
+  this.findById(id).then(product => {
+    const productPhotos = product.photos;
+    async.forEach(productPhotos, function (item/*, callback*/) {
+    //do something with the item
+    Photo.findOne({ _id: item }).then(pic => {
+      if (imgs.indexOf(item.url) === -1) {
+        console.log(item)
+        pic.remove().then(() => {
+          product.photos.pull({ _id: item });  
+          product.save();        
+        })
+      }
+    })
+    //console.log(photos)
+    
+    //Callback when 1 item is finished
+    }, function () {
+        //This function is called when the whole forEach loop is over
+        // cb() //--> This is the point where i call the callback because the iteration is over
+        console.log('All DONE')
+        console.log(photos)
+    });
+    console.log('rrrrr')
+  })
+  
+  // Photo.findOne({ url: imageMain }).then(pic => console.log(pic.id))
+  // console.log(photos)
   return this.findById(id)
     .then(product => {
       return product.update({
@@ -104,22 +143,11 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
         priceSale,
         shipping,
         dateModified,
-        statOne, statTwo, statThree, statFour, statFive, statSix
+        statOne, statTwo, statThree, statFour, statFive, statSix,
+        //photos
       })
       .then(() => {
-        return this.findById(id).then(product => {
-          const Photo = mongoose.model('photo');
-          product.photos.forEach(picId => {
-            Photo.findById(picId).then(pic => {
-              if (imgs.indexOf(pic.url) === -1) {
-                pic.remove().then(() => {
-                  product.photos.pull({ _id: picId })
-                  product.save()
-                });
-              }
-            })
-          })
-        });
+        console.log('UPDATED')
       })
     })
 }
