@@ -8,12 +8,12 @@ import fetchProduct from '../queries/fetchProduct';
 import AdminEditProduct from './AdminEditProduct';
 
 class AdminEditProductWrapper extends Component {
-    // componentWillMount() {
-    //     const { currentUser } = firebase.auth();
-    //     if (!currentUser) {
-    //         hashHistory.push('admin')
-    //     }
-    // }
+    componentWillMount() {
+        const { currentUser } = firebase.auth();
+        if (!currentUser) {
+            hashHistory.push('admin')
+        }
+    }
     render() {
         if (!this.props.data.product) return <div/>
         return <AdminEditProduct product={this.props.data.product} />
