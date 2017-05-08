@@ -1,4 +1,3 @@
-const async = require('async');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -98,58 +97,37 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
   [imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix].forEach(im => {
     if (im) imgs.push(im)
   });
-  console.log(imgs)
-  console.log('=======================================')
+  const Product = mongoose.model('product');
   const Photo = mongoose.model('photo');
-  // const photos = [];
-  // function callback(item) {
-  //   console.log(item)
-  //   photos.push(item)
-  // }
-  this.findById(id).then(product => {
-    const productPhotos = product.photos;
-    async.forEach(productPhotos, function (item/*, callback*/) {
-    //do something with the item
-    Photo.findOne({ _id: item }).then(pic => {
-      if (imgs.indexOf(item.url) === -1) {
-        console.log(item)
-        pic.remove().then(() => {
-          product.photos.pull({ _id: item });  
-          product.save();        
-        })
-      }
+
+  async function removeNotNeededPhotos() {
+    const picList = [];
+    let oldPics;
+    // remove refs from Product.photos
+    imgs.forEach(photo => {
+      (async function() {
+        const pic = await Photo.findOne({ url: photo });
+        picList.push(pic.id);   
+        if (picList.length === imgs.length) {
+          const product = await Product.findById(id);
+          oldPics = product.photos;
+          return product.update({ photos: picList }).then(() => {
+            // remove refs from Photos
+            oldPics.forEach(p => {
+              Photo.findById(p).then(pho => {
+                console.log(picList.indexOf(pho.id))
+                if (picList.indexOf(pho.id) === -1) {
+                  pho.remove();
+                }
+              })
+            })
+          })
+        }
+      })()
     })
-    //console.log(photos)
-    
-    //Callback when 1 item is finished
-    }, function () {
-        //This function is called when the whole forEach loop is over
-        // cb() //--> This is the point where i call the callback because the iteration is over
-        console.log('All DONE')
-        console.log(photos)
-    });
-    console.log('rrrrr')
-  })
-  
-  // Photo.findOne({ url: imageMain }).then(pic => console.log(pic.id))
-  // console.log(photos)
-  return this.findById(id)
-    .then(product => {
-      return product.update({
-        title,
-        description,
-        assortment,
-        price,
-        priceSale,
-        shipping,
-        dateModified,
-        statOne, statTwo, statThree, statFour, statFive, statSix,
-        //photos
-      })
-      .then(() => {
-        console.log('UPDATED')
-      })
-    })
+  }
+  removeNotNeededPhotos();
+
 }
 ProductSchema.statics.deleteProduct = function(id) {
 	return this.findById(id)
