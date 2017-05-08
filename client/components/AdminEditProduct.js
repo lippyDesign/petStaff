@@ -241,7 +241,7 @@ class AdminEditProduct extends Component {
         })
         .then(() => {
             hashHistory.push('/admin');
-            window.location.reload();
+            //window.location.reload();
         })
     }
     handleImageOneChange(e) {
