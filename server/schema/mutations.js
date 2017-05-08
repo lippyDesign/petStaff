@@ -101,20 +101,6 @@ const mutation = new GraphQLObjectType({
                 return Product.addSize(productId, size);
             }
         },
-        // addColor: {
-        //     type: ColorType,
-        //     args: { value: { type: GraphQLString } },
-        //     resolve(parentValue, { value }) {
-        //         return (new Color({ value })).save();
-        //     }
-        // },
-        // addSize: {
-        //     type: SizeType,
-        //     args: { value: { type: GraphQLString } },
-        //     resolve(parentValue, { value }) {
-        //         return (new Size({ value })).save();
-        //     }
-        // },
         editProduct: {
             type: ProductType,
             args: {
