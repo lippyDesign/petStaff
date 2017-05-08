@@ -100,11 +100,52 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
   const Product = mongoose.model('product');
   const Photo = mongoose.model('photo');
 
+  async function updateProd() {
+    const product = await Product.findById(id);
+    // we'll erase all colors and all sizes associated with the product.
+    // remove product's sizes
+    if (product.sizes.length > 0) {
+      const Size = mongoose.model('size');
+      product.sizes.forEach(sizeId => {
+        Size.findById(sizeId)
+        .then(size => {
+          size.products.pull(id)
+          return Promise.all([size.save()])
+        })
+        .catch(res => {
+          console.log('ERROR:')
+          console.log('ERROR:')
+          console.log('ERROR:')
+          console.log(res)
+        })
+      })
+    }
+    // remove product's colors
+    if (product.colors.length > 0) {
+      const Color = mongoose.model('color');
+      product.colors.forEach(colorId => {
+        Color.findById(colorId)
+        .then(color => {
+          color.products.pull(id)
+          return Promise.all([color.save()])
+        })
+        .catch(res => {
+          console.log('ERROR:')
+          console.log('ERROR:')
+          console.log('ERROR:')
+          console.log(res)
+        })
+      })
+    }
+    return product.update({
+      title, description, assortment, price, priceSale, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix, sizes: [], colors: []
+    })
+  }
   async function removeNotNeededPhotos() {
     const picList = [];
     let oldPics;
     // remove refs from Product.photos
-    imgs.forEach(photo => {
+    return imgs.forEach(photo => {
       (async function() {
         const pic = await Photo.findOne({ url: photo });
         picList.push(pic.id);   
@@ -115,7 +156,6 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
             // remove refs from Photos
             oldPics.forEach(p => {
               Photo.findById(p).then(pho => {
-                console.log(picList.indexOf(pho.id))
                 if (picList.indexOf(pho.id) === -1) {
                   pho.remove();
                 }
@@ -126,8 +166,9 @@ ProductSchema.statics.editProduct = function(id, title, description, assortment,
       })()
     })
   }
+  updateProd()
   removeNotNeededPhotos();
-
+  return Product.findById(id).then(p => p);
 }
 ProductSchema.statics.deleteProduct = function(id) {
 	return this.findById(id)

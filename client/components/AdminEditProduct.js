@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
+import firebase from 'firebase';
 
 import cameraPic from '../../style/selectPic.png'
 
@@ -167,7 +168,6 @@ class AdminEditProduct extends Component {
         }
 
         const { fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix } = this.state;
-        console.log(fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix)
         const { white, black, blue, green, red, otherColorOne, otherColorTwo, otherColorThree } = this.state;
         const { oneFitsAll, xs, s, m, l, xl } = this.state;
         const { title, description, collection, price, salePrice, shipping, statOne, statTwo, statThree, statFour, statFive, statSix } = this.state;
@@ -187,53 +187,62 @@ class AdminEditProduct extends Component {
         const dateModified = dateNow.valueOf();
         const id = this.props.product.id
 
-        const { imageOnePreviewUrl, imageTwoPreviewUrl, imageThreePreviewUrl, imageFourPreviewUrl, imageFivePreviewUrl, imageSixPreviewUrl } = this.state;
-
+        let { imageOnePreviewUrl, imageTwoPreviewUrl, imageThreePreviewUrl, imageFourPreviewUrl, imageFivePreviewUrl, imageSixPreviewUrl } = this.state;
+        const imageMain = fileOne ? '' : imageOnePreviewUrl ? imageOnePreviewUrl : '';
+        const imageTwo = fileTwo ? '' : imageTwoPreviewUrl ? imageTwoPreviewUrl : '';
+        const imageThree = fileThree ? '' : imageThreePreviewUrl ? imageThreePreviewUrl : '';
+        const imageFour = fileFour ? '' : imageFourPreviewUrl ? imageFourPreviewUrl : '';
+        const imageFive = fileFive ? '' : imageFivePreviewUrl ? imageFivePreviewUrl : '';
+        const imageSix = fileSix ? '' : imageSixPreviewUrl ? imageSixPreviewUrl : '';
         this.props.editProductMutation({
             variables: { id, title, description, assortment: collection, price, priceSale: salePrice, shipping, dateModified, statOne, statTwo, statThree, statFour, statFive, statSix,
-                imageMain: imageOnePreviewUrl || '', imageTwo: imageTwoPreviewUrl || '', imageThree: imageThreePreviewUrl || '', imageFour: imageFourPreviewUrl || '', imageFive: imageFivePreviewUrl || '', imageSix: imageSixPreviewUrl || '' },
+                imageMain, imageTwo, imageThree, imageFour, imageFive, imageSix },
             refetchQueries: [{ query: fetchProducts }, { query: fetchProductsAdmin }, { query: fetchRandomProducts }]
         })
-        // .then(res => {
-        //     [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
-        //         if (img) {
-        //             const m = this.props.addPhotoToProductMutation;
-        //              uploadImageAsPromise(img, id, i, m)
-        //         }
-        //     })
-        //     const whi = {name: 'white', exists: white}
-        //     const blk = {name: 'black', exists: black}
-        //     const blu = {name: 'blue', exists: blue}
-        //     const grn = {name: 'green', exists: green}
-        //     const rd = {name: 'red', exists: red}
-        //     const ocOne = {name: otherColorOne, exists: otherColorOne}
-        //     const ocTwo = {name: otherColorTwo, exists: otherColorTwo}
-        //     const ocThree = {name: otherColorThree, exists: otherColorThree}
-        //     const colorArray = [whi, blk, blu, grn, rd, ocOne, ocTwo, ocThree];
-        //     colorArray.forEach(({ name, exists }) => {
-        //         if (exists) {
-        //             this.props.addColorToProductMutation({
-        //                 variables: { productId: id, color: name.toLowerCase() }
-        //             })
-        //         }
-        //     })
-        //     const oneFitsAllSizes = {name: 'oneSizeFitsAll', exists: oneFitsAll};
-        //     const extraSmall = {name: 'xs', exists: xs};
-        //     const small = {name: 's', exists: s};
-        //     const medium = {name: 'm', exists: m};
-        //     const large = {name: 'l', exists: l};
-        //     const extraLarge = {name: 'xl', exists: xl};
-        //     const sizeArray = [oneFitsAllSizes, extraSmall, small, medium, large, extraLarge];
-        //     sizeArray.forEach(({ name, exists }) => {
-        //         if (exists) {
-        //             this.props.addSizeToProductMutation({
-        //                 variables: { productId: id, size: name }
-        //             })
-        //         }
-        //     })
-        // }).then(() => {
-        //     hashHistory.push('/admin');
-        // })
+        .then(res => {
+            [fileOne, fileTwo, fileThree, fileFour, fileFive, fileSix].forEach((img, i) => {
+                if (img) {
+                    const m = this.props.addPhotoToProductMutation;
+                     uploadImageAsPromise(img, id, i, m)
+                }
+            })
+            const whi = {name: 'white', exists: white}
+            const blk = {name: 'black', exists: black}
+            const blu = {name: 'blue', exists: blue}
+            const grn = {name: 'green', exists: green}
+            const rd = {name: 'red', exists: red}
+            const ocOne = {name: otherColorOne, exists: otherColorOne}
+            const ocTwo = {name: otherColorTwo, exists: otherColorTwo}
+            const ocThree = {name: otherColorThree, exists: otherColorThree}
+            const colorArray = [whi, blk, blu, grn, rd, ocOne, ocTwo, ocThree, ...this.state.otherColors];
+            // colors
+            colorArray.forEach(({ name, exists }) => {
+                if (exists) {
+                    this.props.addColorToProductMutation({
+                        variables: { productId: id, color: name.toLowerCase() }
+                    })
+                }
+            })
+            const oneFitsAllSizes = {name: 'oneSizeFitsAll', exists: oneFitsAll};
+            const extraSmall = {name: 'xs', exists: xs};
+            const small = {name: 's', exists: s};
+            const medium = {name: 'm', exists: m};
+            const large = {name: 'l', exists: l};
+            const extraLarge = {name: 'xl', exists: xl};
+            const sizeArray = [oneFitsAllSizes, extraSmall, small, medium, large, extraLarge];
+            //sizes
+            sizeArray.forEach(({ name, exists }) => {
+                if (exists) {
+                    this.props.addSizeToProductMutation({
+                        variables: { productId: id, size: name }
+                    })
+                }
+            })
+        })
+        .then(() => {
+            hashHistory.push('/admin');
+            window.location.reload();
+        })
     }
     handleImageOneChange(e) {
         e.preventDefault();
