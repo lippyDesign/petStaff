@@ -57,14 +57,16 @@ app.use('/graphql', expressGraphQL({
 //////////////////////////////// EMAIL ///////////////////////////////////
 
 var nodemailer = require('nodemailer');
-const emailConfig = require('./emailConfig');
+//const emailConfig = require('./emailConfig');
  
 // create reusable transporter object using SMTP transport 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: emailConfig.email,
-        pass: emailConfig.password
+        // user: emailConfig.email,
+        // pass: emailConfig.password
+        user: 'whiskersandpawscompany@gmail.com',
+        pass: 'I<3pets4life'
     }
 });
 
