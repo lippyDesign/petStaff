@@ -13,8 +13,8 @@ const path = require('path');
 const app = express();
 
 // mongoLab URI
-const mLab = require('./mLab');
-const MONGO_URI = mLab;
+//const mLab = require('./mLab');
+const MONGO_URI = 'mongodb://whiskersandpawscompany:I<3pets4life@ds015574.mlab.com:15574/whiskersandpawscompany';
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
 mongoose.Promise = global.Promise;
