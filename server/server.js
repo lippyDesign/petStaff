@@ -13,7 +13,6 @@ const path = require('path');
 const app = express();
 
 // mongoLab URI
-//const mLab = require('./mLab');
 const MONGO_URI = 'mongodb://whiskersandpawscompany:I<3pets4life@ds015574.mlab.com:15574/whiskersandpawscompany';
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
@@ -57,16 +56,13 @@ app.use('/graphql', expressGraphQL({
 //////////////////////////////// EMAIL ///////////////////////////////////
 
 var nodemailer = require('nodemailer');
-//const emailConfig = require('./emailConfig');
  
 // create reusable transporter object using SMTP transport 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        // user: emailConfig.email,
-        // pass: emailConfig.password
-        user: 'whiskersandpawscompany@gmail.com',
-        pass: 'I<3pets4life'
+        user: '',
+        pass: ''
     }
 });
 
@@ -91,7 +87,7 @@ app.post('/contactus', function (req, res) {
     const date = new Date().toString();
     mailOptions = {
         from: `<${email}>`,
-        to: 'vololipu@gmail.com',
+        to: 'whiskersandpawscompany@gmail.com',
         subject: 'message about PET CLOTHES',
         text: 'Hello world',
         html: `
